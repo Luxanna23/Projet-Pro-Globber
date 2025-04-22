@@ -11,20 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('users', function (Blueprint $table) {
-            $table->id();
-            $table->string('firstname');
-            $table->string('lastname');
-            $table->string('phone');
+        Schema::create('annonces', function (Blueprint $table) {
+            $table->id('id');
+            $table->string('title');
+            $table->string('description');
             $table->string('address');
             $table->string('postal_code');
             $table->string('city');
             $table->string('country');
-            $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
-            $table->rememberToken();
+            $table->float('price_per_night');
+            $table->foreignId('user_id')->constrained();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
@@ -33,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists('annonces');
     }
 };

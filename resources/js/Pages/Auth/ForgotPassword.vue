@@ -26,8 +26,8 @@ const submit = () => {
         <Head title="Forgot Password" />
 
         <div class="mb-4 text-sm text-gray-600">
-            Forgot your password? No problem. Just let us know your email address and we will email you a password reset
-            link that will allow you to choose a new one.
+            As-tu oublié ton mot de passe? Pas de problème. Fais-nous savoir ton adresse email et nous t'enverrons un lien de
+            réinitialisation de mot de passe qui te permettra d'en choisir un nouveau.
         </div>
 
         <div v-if="status" class="mb-4 font-medium text-sm text-green-600">
