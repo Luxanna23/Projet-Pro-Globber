@@ -42,6 +42,9 @@ class AnnonceController extends Controller
             'description' => 'required|string',
             'price_per_night' => 'required|numeric',
             'address' => 'required|string|max:255',
+            'postal_code' => 'required|digits_between:4,10',
+            'city' => 'required|string|max:255',
+            'country' => 'required|string|max:255',
             'images' => 'required|array',
             'images.*' => 'image|mimes:jpeg,png,jpg|max:2048',
         ]);
@@ -51,6 +54,9 @@ class AnnonceController extends Controller
             'description' => $request->description,
             'price_per_night' => $request->price_per_night,
             'address' => $request->address,
+            'postal_code' => $request->postal_code,
+            'city' => $request->city,
+            'country' => $request->country,
             'user_id' => auth()->id(),
         ]);
     
@@ -63,11 +69,11 @@ class AnnonceController extends Controller
                 // Save l'image dans en db
                 AnnonceImage::create([
                     'annonce_id' => $annonce->id,
-                    'path' => $path,
+                    'path' => $filename,
                 ]);
             }
         }
-        return redirect()->route('annonces.create')->with('success', 'Annonce créée avec succès.');
+        return redirect()->route('annonces.index')->with('success', 'Annonce créée avec succès.');
     }
 
     /**
@@ -75,7 +81,13 @@ class AnnonceController extends Controller
      */
     public function show(Annonce $annonce)
     {
-        //
+        return Inertia::render('Annonces/Show', [
+            'annonce' => [
+                ...$annonce->toArray(),
+                'image_urls' => $annonce->images->map(fn ($image) => asset('storage/AnnonceImage/'.$image->path)),
+            ],
+            'user' => auth()->user(),
+        ]);
     }
 
     /**

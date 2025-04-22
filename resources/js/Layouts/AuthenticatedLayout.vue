@@ -20,20 +20,36 @@ const showingNavigationDropdown = ref(false);
                         <div class="flex">
                             <!-- Logo -->
                             <div class="shrink-0 flex items-center">
-                                <Link :href="route('dashboard')">
+                                <Link :href="route('annonces.index')">
                                     <ApplicationLogo
                                         class="block h-9 w-auto fill-current text-gray-800"
                                     />
                                 </Link>
                             </div>
 
-                            <!-- Navigation Links -->
+                            <!-- La page d'acceuil -->
                             <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
 
                                 <NavLink :href="route('annonces.index')" :active="route().current('annonces.index')">
                                     Annonces
                                 </NavLink>
                             </div>
+
+                            <!-- Publier une annonce -->
+                            <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+
+                                <NavLink :href="route('annonces.create')" :active="route().current('annonces.create')">
+                                    Publier une annonce
+                                </NavLink>
+                            </div>
+
+                             <!-- la page rechercher
+                             <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+
+                                <NavLink :href="route('')" :active="route().current('')">
+                                    Rechercher
+                                </NavLink>
+                            </div> -->
                         </div>
 
                         <div class="hidden sm:flex sm:items-center sm:ms-6">

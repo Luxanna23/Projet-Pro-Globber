@@ -17,18 +17,24 @@ defineProps({
 const user = usePage().props.auth.user;
 
 const form = useForm({
-    name: user.name,
+    firstname: user.firstname,
+    lastname: user.lastname,
     email: user.email,
+    phone: user.phone,
+    address: user.address,
+    postal_code: user.postal_code,
+    city: user.city,
+    country: user.country,
 });
 </script>
 
 <template>
     <section>
         <header>
-            <h2 class="text-lg font-medium text-gray-900">Information du Profile</h2>
+            <h2 class="text-lg font-medium text-gray-900">Information du profil</h2>
 
             <p class="mt-1 text-sm text-gray-600">
-                Modifie les informations de ton profile ici.
+                Modifie les informations de ton profil ici.
             </p>
         </header>
 
@@ -119,7 +125,6 @@ const form = useForm({
 
                 <TextInput
                     id="postal_code"
-                    type="number"
                     class="mt-1 block w-full"
                     v-model="form.postal_code"
                     required

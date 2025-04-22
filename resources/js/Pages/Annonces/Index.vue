@@ -14,7 +14,7 @@ const getImage = (annonce) => {
 </script>
 
 <template>
-    <Head title="annonces" />
+    <Head title="Home" />
 
 <AuthenticatedLayout>
     <template #header>

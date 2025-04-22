@@ -1,88 +1,171 @@
-<template>
-    <div>
-        <h1>Créer une annonce</h1>
-        <p>Bienvenue sur la page de création d'annonces.</p>
-    </div>
-</template>
+<script setup>
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import InputError from '@/Components/InputError.vue';
+import InputLabel from '@/Components/InputLabel.vue';
+import PrimaryButton from '@/Components/PrimaryButton.vue';
+import TextInput from '@/Components/TextInput.vue';
+import { Head, Link, useForm } from '@inertiajs/vue3';
 
-<!-- <template>
-    <div class="container">
-      <h1>Créer une annonce</h1>
-  
-      <form @submit.prevent="submitForm">
-        <div>
-          <label for="title">Titre</label>
-          <input type="text" id="title" v-model="form.title" required />
-        </div>
-  
-        <div>
-          <label for="description">Description</label>
-          <textarea id="description" v-model="form.description" required></textarea>
-        </div>
-  
-        <div>
-          <label for="price_per_night">Prix par nuit</label>
-          <input type="number" id="price_per_night" v-model="form.price_per_night" required />
-        </div>
-  
-        <div>
-          <label for="address">Adresse</label>
-          <input type="text" id="address" v-model="form.address" required />
-        </div>
-  
-        <div>
-          <label for="images">Images</label>
-          <input type="file" id="images" @change="handleFileChange" multiple />
-        </div>
-  
-        <button type="submit">Créer l'annonce</button>
-      </form>
-  
-      <div v-if="successMessage" class="success">
-        {{ successMessage }}
-      </div>
-    </div>
-  </template>
-  
-  <script setup>
-  import { ref } from 'vue';
-  import { useForm } from '@inertiajs/vue3';
-  
-  const form = useForm({
+const form = useForm({
     title: '',
     description: '',
-    price_per_night: '',
     address: '',
-    images: []
-  });
-  
-  const successMessage = ref(null);
-  
-  const handleFileChange = (event) => {
-    form.images = event.target.files;
-  };
-  
-  const submitForm = () => {
+    postal_code: '',
+    city: '',
+    country: '',
+    price_per_night: '',
+    images: null,
+});
+
+const handleImageUpload = (e) => {
+    form.images = e.target.files;
+};
+
+const submit = () => {
     form.post(route('annonces.store'), {
-      onSuccess: () => {
-        successMessage.value = 'Annonce créée avec succès.';
-      },
-      onError: () => {
-        successMessage.value = 'Une erreur est survenue.';
-      }
+        forceFormData: true,
+        onFinish: () => form.reset(),
     });
-  };
-  </script>
-  
-  <style scoped>
-  /* Style pour le formulaire */
-  .container {
-    max-width: 600px;
-    margin: 0 auto;
-    padding: 20px;
-  }
-  .success {
-    margin-top: 20px;
-    color: green;
-  }
-  </style> -->
+};
+</script>
+
+<template>
+  <AuthenticatedLayout>
+        <Head title="Créer une annonce" />
+
+        <form @submit.prevent="submit" class="max-w-xl w-full mx-auto mt-12 p-6 bg-white shadow-lg rounded-xl flex flex-col gap-6">
+              <!-- POUR DL L'IMAGE -->
+              <div>
+                <InputLabel for="images" value="Images" />
+                <input
+                    id="images"
+                    type="file"
+                    class="mt-1 block w-full"
+                    multiple
+                    @change="handleImageUpload"
+                />
+                <InputError class="mt-2" :message="form.errors.images" />
+            </div>
+
+
+            <div>
+                <InputLabel for="title" value="Titre" />
+
+                <TextInput
+                    id="title"
+                    type="text"
+                    class="mt-1 block w-full"
+                    v-model="form.title"
+                    required
+                    autofocus
+                    autocomplete="title"
+                />
+
+                <InputError class="mt-2" :message="form.errors.title" />
+            </div>
+
+            <div>
+                <InputLabel for="description" value="Description" />
+
+                <TextInput
+                    id="description"
+                    type="text"
+                    class="mt-1 block w-full"
+                    v-model="form.description"
+                    required
+                    autofocus
+                    autocomplete="description"
+                />
+
+                <InputError class="mt-2" :message="form.errors.description" />
+            </div>
+
+            <div> <!-- addresse -->
+                <InputLabel for="address" value="Addresse" />
+
+                <TextInput
+                    id="address"
+                    type="text"
+                    class="mt-1 block w-full"
+                    v-model="form.address"
+                    required
+                    autocomplete="address"
+                />
+
+                <InputError class="mt-2" :message="form.errors.address" />
+            </div>
+
+            <div> <!-- code postale -->
+                <InputLabel for="postal_code" value="Code Postal" />
+
+                <TextInput
+                    id="postal_code"
+                    type="number"
+                    class="mt-1 block w-full"
+                    v-model="form.postal_code"
+                    required
+                    autofocus
+                    autocomplete="postal_code"
+                />
+
+                <InputError class="mt-2" :message="form.errors.postal_code" />
+            </div>
+
+            <div>  <!-- ville -->
+                <InputLabel for="city" value="Ville" />
+
+                <TextInput
+                    id="city"
+                    type="text"
+                    class="mt-1 block w-full"
+                    v-model="form.city"
+                    required
+                    autofocus
+                    autocomplete="city"
+                />
+
+                <InputError class="mt-2" :message="form.errors.city" />
+            </div>
+
+            <div>  <!-- Pays -->
+                <InputLabel for="country" value="Pays" />
+
+                <TextInput
+                    id="country"
+                    type="text"
+                    class="mt-1 block w-full"
+                    v-model="form.country"
+                    required
+                    autofocus
+                    autocomplete="country"
+                />
+
+                <InputError class="mt-2" :message="form.errors.country" />
+            </div>
+
+            <div>  <!-- price_per_night -->
+                <InputLabel for="price_per_night" value="Prix par nuit" />
+
+                <TextInput
+                    id="price_per_night"
+                    type="text"
+                    class="mt-1 block w-full"
+                    v-model="form.price_per_night"
+                    required
+                    autofocus
+                    autocomplete="price_per_night"
+                />
+
+                <InputError class="mt-2" :message="form.errors.price_per_night" />
+            </div>
+
+
+            <div class="flex items-center justify-end mt-4">
+                <PrimaryButton class="ms-4" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
+                    Publier
+                </PrimaryButton>
+            </div>
+            
+      </form>
+  </AuthenticatedLayout>
+</template>
