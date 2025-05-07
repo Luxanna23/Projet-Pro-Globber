@@ -1,3 +1,3 @@
 <template>
-    <img src="/images/Logo.svg" alt="Logo" class="h-10 w-auto" />
+    <img src="/images/Logo.png" alt="Logo" class="h-8 w-auto" />
 </template>

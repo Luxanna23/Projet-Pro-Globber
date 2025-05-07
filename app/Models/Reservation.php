@@ -16,5 +16,34 @@ class Reservation extends Model
         'end_date',
         'user_id',
         'annonce_id',
+        'calendrier_id',
+        'status',
     ];
+
+    // Relation vers Calendrier
+    public function calendrier()
+    {
+        return $this->belongsTo(Calendrier::class);
+    }
+
+    // Relation vers Annonce
+    public function annonce()
+    {
+        return $this->belongsTo(Annonce::class);
+    }
+
+    // Relation vers User
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    protected static function booted()
+{
+    static::deleting(function ($reservation) {
+        if ($reservation->calendrier) {
+            $reservation->calendrier->delete();
+        }
+    });
+}
 }

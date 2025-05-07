@@ -16,5 +16,11 @@
         "tailwindcss": "^3.2.1",
         "vite": "^5.0.0",
         "vue": "^3.4.0"
+    },
+    "dependencies": {
+        "swiper": "^11.2.6",
+        "vue-easy-lightbox": "^1.19.0",
+        "vue-toastification": "^2.0.0-rc.5",
+        "vue3-datepicker": "^0.4.0"
     }
 }

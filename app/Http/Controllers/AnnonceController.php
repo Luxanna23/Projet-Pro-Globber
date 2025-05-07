@@ -42,7 +42,7 @@ class AnnonceController extends Controller
             'description' => 'required|string',
             'price_per_night' => 'required|numeric',
             'address' => 'required|string|max:255',
-            'postal_code' => 'required|digits_between:4,10',
+            'postal_code' => 'required|digits_between:4,11',
             'city' => 'required|string|max:255',
             'country' => 'required|string|max:255',
             'images' => 'required|array',

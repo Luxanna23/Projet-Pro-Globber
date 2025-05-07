@@ -15,5 +15,18 @@ class Calendrier extends Model
         'start_date',
         'end_date',
         'annonce_id',
+        'type',
     ];
+
+     // Relation vers Annonce
+     public function annonce()
+     {
+         return $this->belongsTo(Annonce::class);
+     }
+ 
+     // Relation inverse
+     public function reservation()
+     {
+         return $this->hasOne(Reservation::class);
+     }
 }

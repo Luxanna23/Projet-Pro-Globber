@@ -29,6 +29,11 @@ class AnnonceSeeder extends Seeder
                 'path' => "1.jpg ",
                 'annonce_id' => $annonce->id,
             ]);
+
+            \App\Models\AnnonceImage::create([
+                'path' => "2.jpg ",
+                'annonce_id' => $annonce->id,
+            ]);
         }
     }
 }

@@ -16,6 +16,7 @@ return new class extends Migration
             $table->date('start_date');
             $table->date('end_date');
             $table->foreignId('annonce_id')->constrained();
+            $table->string('type')->default('disponible'); 
             $table->timestamps();
             $table->softDeletes();
         });
