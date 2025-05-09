@@ -91,7 +91,7 @@ class ReservationController extends Controller
         ]);
 
         // Créer la réservation
-        Reservation::create([
+        $reservation = Reservation::create([
             'annonce_id' => $annonce->id,
             'user_id' => auth()->id(),
             'start_date' => $start,
@@ -99,8 +99,7 @@ class ReservationController extends Controller
             'price' => $price,
             'calendrier_id' => $calendrier->id,
         ]);
-
-        return redirect()->back()->with('success', 'Réservation effectuée avec succès.');
+        return redirect()->route('reservations.confirmation', ['reservation' => $reservation->id]);
     }
 
 

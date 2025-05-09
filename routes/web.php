@@ -2,10 +2,10 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReservationController;
+use App\Models\Reservation;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -37,5 +37,12 @@ Route::post('/annonces/{annonce}/reserver', [ReservationController::class, 'stor
     ->middleware(['auth', 'verified'])
     ->name('annonces.reserve');
 
+Route::get('/reservations/{reservation}/confirmation', function (Reservation $reservation) {
+    $reservation->load('annonce', 'user');
+
+    return Inertia::render('Reservations/Confirmation', [
+        'reservation' => $reservation,
+    ]);
+})->middleware(['auth'])->name('reservations.confirmation');
 
 require __DIR__.'/auth.php';

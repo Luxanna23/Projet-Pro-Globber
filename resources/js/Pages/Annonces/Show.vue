@@ -7,8 +7,9 @@ import { Pagination, Navigation } from 'swiper/modules';
 import VueEasyLightbox from 'vue-easy-lightbox';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import Datepicker from 'vue3-datepicker';
-import { Head, Link, useForm } from '@inertiajs/vue3';
-import { ref, computed  } from 'vue';
+import { Head, Link, useForm,usePage } from '@inertiajs/vue3';
+import { ref, computed, onMounted, nextTick } from 'vue';
+import { useToast } from 'vue-toastification';
 
 const props = defineProps({
     annonce: Object, // contient toutes les infos de l'annonce
