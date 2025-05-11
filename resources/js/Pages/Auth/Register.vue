@@ -24,7 +24,7 @@ const submit = () => {
     <GuestLayout>
         <Head title="Inscription" />
 
-        <form @submit.prevent="submit">
+        <form @submit.prevent="submit" class="max-w-xl w-full mx-auto mt-12 p-6 bg-white shadow-lg rounded-xl flex flex-col gap-6">
             <div>
                 <InputLabel for="firstname" value="Prenom" />
 
@@ -195,15 +195,6 @@ const submit = () => {
                 <PrimaryButton class="ms-4" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
                     Inscription
                 </PrimaryButton>
-            </div>
-            
-            <div class="mt-4">
-                <Link
-                    :href="route('login')"
-                    class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                >
-                    Déjà inscrit ?
-                </Link>
             </div>
         </form>
     </GuestLayout>

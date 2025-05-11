@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Annonce;
 use App\Models\Calendrier;
 use App\Models\Reservation;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
@@ -18,14 +19,29 @@ class ReservationController extends Controller
      */
     public function index()
     {
-            $reservations = Reservation::with('annonce')
-            ->where('user_id', auth()->id())
-            ->latest()
+        /** @var User $user */ //cette ligne est pour indiquer que $user est de type User juste pcq vscode m'embete
+        $user = auth()->user();
+        $user->reservations();
+
+        // Réservations à venir 
+        $reservationsActives = $user->reservations()
+            ->with('annonce')
+            ->whereDate('end_date', '>=', Carbon::today())
+            ->orderBy('start_date', 'asc')
             ->get();
 
-        return Inertia::render('Reservations/Index', [
-            'reservations' => $reservations,
-    ]);
+        // Réservations passées
+        $reservationsPassees = $user->reservations()
+            ->with('annonce')
+            ->whereDate('end_date', '<', Carbon::today())
+            ->orderBy('start_date', 'desc')
+            ->get();
+
+        return Inertia::render('Profile/Reservations', [
+            'reservationsActives' => $reservationsActives,
+            'reservationsPassees' => $reservationsPassees,
+        ]);
+
     }
 
     /**

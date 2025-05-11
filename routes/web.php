@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\OwnerReservationController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReservationController;
 use App\Models\Reservation;
@@ -30,6 +31,8 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
+    Route::get('/profile/reservations', [ReservationController::class, 'index'])->name('profile.reservations');
+
     Route::resource('annonces', \App\Http\Controllers\AnnonceController::class);
 });
 
@@ -44,5 +47,13 @@ Route::get('/reservations/{reservation}/confirmation', function (Reservation $re
         'reservation' => $reservation,
     ]);
 })->middleware(['auth'])->name('reservations.confirmation');
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/proprietaire/reservations', [OwnerReservationController::class, 'index'])
+        ->name('owner.reservations');
+
+    Route::patch('/proprietaire/reservations/{reservation}/status', [OwnerReservationController::class, 'updateStatus'])
+        ->name('owner.reservations.updateStatus');
+});
 
 require __DIR__.'/auth.php';

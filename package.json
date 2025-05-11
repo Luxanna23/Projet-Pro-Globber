@@ -18,6 +18,7 @@
         "vue": "^3.4.0"
     },
     "dependencies": {
+        "sweetalert2": "^11.21.0",
         "swiper": "^11.2.6",
         "vue-easy-lightbox": "^1.19.0",
         "vue-toastification": "^2.0.0-rc.5",

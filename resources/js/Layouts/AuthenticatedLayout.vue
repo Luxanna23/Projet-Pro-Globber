@@ -50,9 +50,19 @@ const showingNavigationDropdown = ref(false);
                                     Rechercher
                                 </NavLink>
                             </div> -->
+
                         </div>
 
+                      
                         <div class="hidden sm:flex sm:items-center sm:ms-6">
+                              <!-- Coté propriétaire -->
+                            <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+
+                                <NavLink :href="route('owner.reservations')" :active="route().current('owner.reservations')">
+                                    Coté propriétaire
+                                </NavLink>
+                            </div>
+
                             <!-- Settings Dropdown -->
                             <div class="ms-3 relative">
                                 <Dropdown align="right" width="48">
@@ -82,6 +92,7 @@ const showingNavigationDropdown = ref(false);
 
                                     <template #content>
                                         <DropdownLink :href="route('profile.edit')"> Profile </DropdownLink>
+                                        <DropdownLink :href="route('profile.reservations')"> Mes réservations </DropdownLink>
                                         <DropdownLink :href="route('logout')" method="post" as="button">
                                             Log Out
                                         </DropdownLink>
@@ -151,6 +162,7 @@ const showingNavigationDropdown = ref(false);
 
                         <div class="mt-3 space-y-1">
                             <ResponsiveNavLink :href="route('profile.edit')"> Profile </ResponsiveNavLink>
+                            <ResponsiveNavLink :href="route('profile.reservations')"> Mes réservations </ResponsiveNavLink>
                             <ResponsiveNavLink :href="route('logout')" method="post" as="button">
                                 Log Out
                             </ResponsiveNavLink>
