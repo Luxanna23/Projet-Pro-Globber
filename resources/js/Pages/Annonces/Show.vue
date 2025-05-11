@@ -6,14 +6,16 @@ import 'swiper/css/navigation';
 import { Pagination, Navigation } from 'swiper/modules';
 import VueEasyLightbox from 'vue-easy-lightbox';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import Datepicker from 'vue3-datepicker';
+import Datepicker from '@vuepic/vue-datepicker'
+import '@vuepic/vue-datepicker/dist/main.css'
 import { Head, Link, useForm,usePage } from '@inertiajs/vue3';
-import { ref, computed, onMounted, nextTick } from 'vue';
-import { useToast } from 'vue-toastification';
+import { ref, computed, onMounted, nextTick, watch  } from 'vue';
+import { isWithinInterval, parseISO } from 'date-fns';
 
 const props = defineProps({
-    annonce: Object, // contient toutes les infos de l'annonce
-    user: Object,     // l'utilisateur connecté
+    annonce: Object,
+    user: Object,    
+    calendrier: Array,
 });
 
 const modules = [Pagination, Navigation]
@@ -35,8 +37,6 @@ const form = useForm({
   end_date: '',
 })
 
-const formRange = ref(null)
-
 const handleRangeSelect = ([start, end]) => {
   form.start_date = start
   form.end_date = end
@@ -45,6 +45,17 @@ const handleRangeSelect = ([start, end]) => {
 const submit = () => {
   form.post(route('annonces.reserve', annonce.id), {
     preserveScroll: true,
+  })
+}
+
+const isDateIn = (date, type) => {
+  return (props.calendrier ?? []).some(p => {
+    if (p.type !== type) return false
+
+    const start = parseISO(p.start)
+    const end = parseISO(p.end)
+
+    return isWithinInterval(date, { start, end })
   })
 }
 
@@ -61,6 +72,37 @@ const total = computed(() => {
   return Number(rawTotal.toFixed(2));
   //toFixed retourne une chaîne, donc on utilise Number() pour le convertir à nouveau en nombre.
 });
+
+const startDateRef = ref(null)
+const endDateRef = ref(null)
+
+const reservedPeriods = computed(() =>
+  (props.calendrier ?? [])
+    .filter(p => p.type === 'réservé')
+    .map(p => ({
+      start: new Date(p.start),
+      end: new Date(p.end),
+    }))
+)
+
+// Fonction de blocage de date
+const isDateDisabled = (date) => {
+  const d = new Date(date)
+  return reservedPeriods.value.some(p => d >= p.start && d <= p.end)
+}
+
+// Synchronisation ref -> form
+watch(startDateRef, (val) => {
+  form.start_date = val ? val.toISOString().split('T')[0] : ''
+  // Reset end_date si elle devient invalide
+  if (endDateRef.value && endDateRef.value <= val) {
+    endDateRef.value = null
+  }
+})
+
+watch(endDateRef, (val) => {
+  form.end_date = val ? val.toISOString().split('T')[0] : ''
+})
 
 </script>
 
@@ -118,13 +160,34 @@ const total = computed(() => {
           <div class="grid grid-cols-2 gap-4 text-gray-700">
             <p><strong>Adresse:</strong> {{ annonce.address }}</p>
             <p><strong>Code postal:</strong> {{ annonce.postal_code }}</p>
-            <p><strong>Prix:</strong> {{ annonce.price_per_night }}€ / nuit</p>
+            <p><strong>Ville:</strong> {{ annonce.city }}</p>
+            <p><strong>Pays:</strong> {{ annonce.country }}</p>
           </div>
   
-          <!-- Placeholder calendrier -->
-          <div class="border rounded-xl p-6 bg-gray-100 text-center text-gray-500 italic">
-            📅 Calendrier de réservation (à venir)
+          <!-- Calendrier visuel -->
+          <div class=" p-6 w-full">
+            <h2 class="text-xl font-semibold mb-4">Disponibilités de l'annonce</h2>
+
+            <VCalendar :columns="1" :readonly="true" class="w-full">
+              <template #day-content="{ day }">
+                <div
+                  :class="[
+                    'w-8 h-8 flex items-center justify-center rounded-full text-sm',
+                    isDateIn(day.date, 'réservé') ? 'bg-red-200 text-red-800 font-bold' : '',
+                    isDateIn(day.date, 'disponible') ? 'bg-green-200 text-green-800 font-bold' : ''
+                  ]"
+                >
+                  {{ day.day }}
+                </div>
+              </template>
+            </VCalendar>
+
+            <div class="mt-4 text-sm text-gray-600">
+              <span class="inline-block w-3 h-3 bg-green-500 rounded-full mr-1"></span> Disponible
+              <span class="inline-block w-3 h-3 bg-red-500 rounded-full ml-4 mr-1"></span> Réservé
+            </div>
           </div>
+
   
           <!-- Commentaires fictifs -->
           <div>
@@ -162,32 +225,34 @@ const total = computed(() => {
 
                 <!-- Sélecteur de dates -->
                 <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Arrivée</label>
-                        <Datepicker
-                        v-model="form.start_date"
-                        :enable-time-picker="false"
-                        :min-date="new Date()"
-                        placeholder="Date d'arrivée"
-                        class="w-full"
-                        />
-                    </div>
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Arrivée</label>
+                    <Datepicker
+                      v-model="startDateRef"
+                      :enable-time-picker="false"
+                      :min-date="new Date()"
+                      :disabled-dates="isDateDisabled"
+                      placeholder="Date d'arrivée"
+                      class="w-full"
+                    />
+                  </div>
 
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Départ</label>
-                        <Datepicker
-                        v-model="form.end_date"
-                        :enable-time-picker="false"
-                        :min-date="form.start_date || new Date()"
-                        placeholder="Date de départ"
-                        class="w-full"
-                        />
-                    </div>
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Départ</label>
+                    <Datepicker
+                      v-model="endDateRef"
+                      :enable-time-picker="false"
+                      :min-date="startDateRef || new Date()"
+                      :disabled-dates="isDateDisabled"
+                      placeholder="Date de départ"
+                      class="w-full"
+                    />
+                  </div>
                 </div>
 
                 <div>
                     <label class="block text-sm">Voyageurs</label>
-                    <select v-model="voyageurs" class="w-full bg-gray-800 text-white rounded-md p-2 mt-1">
+                    <select v-model="voyageurs" class="w-full bg-gray-100 text-grey rounded-md p-2 mt-1">
                     <option value="1">1 voyageur</option>
                     <option value="2">2 voyageurs</option>
                     <option value="3">3 voyageurs</option>

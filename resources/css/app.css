@@ -1,3 +1,4 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import 'vue3-datepicker/dist/vue3-datepicker.css';

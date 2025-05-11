@@ -22,7 +22,7 @@ class AnnonceSeeder extends Seeder
                 'postal_code' => "75001",
                 'city' => "Paris",
                 'country' => "France",
-                'user_id' => 1,
+                'user_id' => 2,
             ]);
 
             \App\Models\AnnonceImage::create([

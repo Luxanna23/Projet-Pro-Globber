@@ -64,8 +64,8 @@ class ReservationController extends Controller
             'end_date' => 'required|date|after:start_date',
         ]);
 
-        $start = Carbon::parse($request->start_date)->startOfDay();
-        $end = Carbon::parse($request->end_date)->endOfDay();
+        $start = Carbon::createFromFormat('Y-m-d', substr($request->start_date, 0, 10))->startOfDay();
+        $end = Carbon::createFromFormat('Y-m-d', substr($request->end_date, 0, 10))->endOfDay();
 
         $annonce = Annonce::findOrFail($annonceId);
         
@@ -115,6 +115,36 @@ class ReservationController extends Controller
             'price' => $price,
             'calendrier_id' => $calendrier->id,
         ]);
+
+        // Découper les disponibilités si chevauchement
+        $dispo = Calendrier::where('annonce_id', $annonce->id)
+            ->where('type', 'disponible')
+            ->where('start_date', '<=', $start)
+            ->where('end_date', '>=', $end)
+            ->first();
+
+        if ($dispo) {
+            $dispo->delete();
+
+            if ($start->greaterThan($dispo->start_date)) {
+                Calendrier::create([
+                    'annonce_id' => $annonce->id,
+                    'start_date' => $dispo->start_date,
+                    'end_date' => $start,
+                    'type' => 'disponible',
+                ]);
+            }
+
+            if ($end->lessThan($dispo->end_date)) {
+                Calendrier::create([
+                    'annonce_id' => $annonce->id,
+                    'start_date' => $end,
+                    'end_date' => $dispo->end_date,
+                    'type' => 'disponible',
+                ]);
+            }
+        }
+
         return redirect()->route('reservations.confirmation', ['reservation' => $reservation->id]);
     }
 

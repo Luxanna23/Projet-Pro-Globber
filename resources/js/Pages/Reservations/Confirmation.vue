@@ -1,7 +1,7 @@
 <script setup>
 
 import { usePage } from '@inertiajs/vue3'
-
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 const reservation = usePage().props.reservation
 
 const formatDate = (date) =>
@@ -10,6 +10,7 @@ const formatDate = (date) =>
 </script>
 
 <template>
+  <AuthenticatedLayout>
   <div
   class="min-h-screen bg-center bg-cover relative"
   :style="{ backgroundImage: 'url(' + reservation.annonce.first_image + ')' }"
@@ -45,14 +46,15 @@ const formatDate = (date) =>
 
         <!-- Boutons -->
         <div class="flex flex-col sm:flex-row justify-center gap-4">
-          <a href="/reservations" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition">
+          <a href="/profile/reservations" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition">
             Voir mes réservations
           </a>
-          <a href="/" class="px-4 py-2 border border-gray-300 text-gray-600 rounded-lg hover:bg-gray-100 transition">
+          <a href="/annonces" class="px-4 py-2 border border-gray-300 text-gray-600 rounded-lg hover:bg-gray-100 transition">
             Retour à l'accueil
           </a>
         </div>
       </div>
     </div>
   </div>
+  </AuthenticatedLayout>
 </template>

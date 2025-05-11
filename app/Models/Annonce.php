@@ -49,4 +49,12 @@ class Annonce extends Model
 
         return "https://via.placeholder.com/400x300?text=Annonce";
     }
+    public function calendrier()
+    {
+        return $this->hasMany(Calendrier::class);
+    }
+    public function disponibilites()
+{
+    return $this->hasMany(Calendrier::class)->where('type', 'disponible');
+}
 }

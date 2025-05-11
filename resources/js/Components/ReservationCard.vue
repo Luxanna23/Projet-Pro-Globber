@@ -27,19 +27,19 @@ function formatDate(date) {
         class="absolute top-2 right-2 flex items-center gap-1 text-xs font-medium px-2 py-1 rounded shadow"
         :class="{
         'bg-blue-100 text-blue-800': reservation.status === 'pending',
-        'bg-green-100 text-green-800': reservation.status === 'confirmed',
+        'bg-green-100 text-green-800': reservation.status === 'accepted',
         'bg-red-100 text-red-800': reservation.status === 'refused',
         'bg-gray-100 text-gray-600': reservation.status === 'cancelled',
         }"
         >
         <span v-if="reservation.status === 'pending'">🕒</span>
-        <span v-else-if="reservation.status === 'confirmed'">✅</span>
+        <span v-else-if="reservation.status === 'accepted'">✅</span>
         <span v-else-if="reservation.status === 'refused'">❌</span>
         <span v-else-if="reservation.status === 'cancelled'">🚫</span>
 
         {{
             reservation.status === 'pending' ? 'En attente' :
-            reservation.status === 'confirmed' ? 'Confirmée' :
+            reservation.status === 'accepted' ? 'Confirmée' :
             reservation.status === 'refused' ? 'Refusée' : 'Annulée'
         }}
     </div>

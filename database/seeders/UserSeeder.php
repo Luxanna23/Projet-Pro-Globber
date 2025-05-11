@@ -16,8 +16,20 @@ class UserSeeder extends Seeder
         \App\Models\User::create([
             'firstname' => 'toto',
             'lastname' => 'toto',
-            'email' => 'toto@toto.fr',
+            'email' => 'toto@gmail.com',
             'phone' => '0612345678',
+            'password' => Hash::make('totototo'),
+            'address' => '1 rue de la paix, Paris',
+            'postal_code' => '75001',
+            'city' => 'Paris',
+            'country' => 'France',
+        ]);
+
+        \App\Models\User::create([
+            'firstname' => 'dada',
+            'lastname' => 'dada',
+            'email' => 'dada@gmail.com',
+            'phone' => '0612365678',
             'password' => Hash::make('totototo'),
             'address' => '1 rue de la paix, Paris',
             'postal_code' => '75001',

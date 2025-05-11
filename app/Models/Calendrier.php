@@ -29,4 +29,5 @@ class Calendrier extends Model
      {
          return $this->hasOne(Reservation::class);
      }
+     
 }

@@ -6,6 +6,7 @@ use App\Models\Annonce;
 use App\Http\Requests\StoreAnnonceRequest;
 use App\Http\Requests\UpdateAnnonceRequest;
 use App\Models\AnnonceImage;
+use App\Models\Calendrier;
 use Inertia\Inertia;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
@@ -37,7 +38,7 @@ class AnnonceController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'required|string',
             'price_per_night' => 'required|numeric',
@@ -47,6 +48,9 @@ class AnnonceController extends Controller
             'country' => 'required|string|max:255',
             'images' => 'required|array',
             'images.*' => 'image|mimes:jpeg,png,jpg|max:2048',
+            'disponibilites' => 'nullable|array',
+            'disponibilites.*.start' => 'required|date',
+            'disponibilites.*.end' => 'required|date|after_or_equal:disponibilites.*.start',
         ]);
 
         $annonce = Annonce::create([
@@ -59,6 +63,17 @@ class AnnonceController extends Controller
             'country' => $request->country,
             'user_id' => auth()->id(),
         ]);
+
+        if (!empty($validated['disponibilites'])) {
+            foreach ($validated['disponibilites'] as $periode) {
+                Calendrier::create([
+                    'annonce_id' => $annonce->id,
+                    'start_date' => $periode['start'],
+                    'end_date' => $periode['end'],
+                    'type' => 'disponible',
+                ]);
+            }
+        }
     
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $image) {
@@ -81,12 +96,20 @@ class AnnonceController extends Controller
      */
     public function show(Annonce $annonce)
     {
+        $annonce->load('calendrier');
+
+        $calendrier = $annonce->calendrier->map(fn ($entry) => [
+            'start' => $entry->start_date,
+            'end' => $entry->end_date,
+            'type' => $entry->type,
+        ]);
         return Inertia::render('Annonces/Show', [
             'annonce' => [
                 ...$annonce->toArray(),
                 'image_urls' => $annonce->images->map(fn ($image) => asset('storage/AnnonceImage/'.$image->path)),
             ],
             'user' => auth()->user(),
+            'calendrier' => $calendrier,
         ]);
     }
 
