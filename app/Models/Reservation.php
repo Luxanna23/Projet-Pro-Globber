@@ -18,6 +18,7 @@ class Reservation extends Model
         'annonce_id',
         'calendrier_id',
         'status',
+        'last_read_at',
     ];
 
     // Relation vers Calendrier

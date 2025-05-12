@@ -75,6 +75,14 @@ Route::get('/messages', function () {
         ->latest()
         ->get();
 
+    // Ajoute le champ has_unread pour chaque réservation
+    foreach ($reservations as $reservation) {
+        $reservation->has_unread = $reservation->messages
+            ->where('sender_id', '!=', $user->id)
+            ->where('created_at', '>', $reservation->last_read_at)
+            ->isNotEmpty();
+    }
+
     return Inertia::render('Messages/Inbox', [
         'reservations' => $reservations,
         'userId' => $user->id,
@@ -85,6 +93,34 @@ Route::post('/reservations/{reservation}/messages', [MessageController::class, '
     ->middleware(['auth', 'verified'])
     ->name('messages.store');
 
-// 
+Route::post('/messages/{reservation}/read', [MessageController::class, 'markAsRead'])
+    ->middleware(['auth', 'verified'])
+    ->name('messages.markAsRead');
+
+// c'est pour le rafraichissement de la messagerie
+
+Route::get('/messages/refresh', function () {
+    $user = auth()->user();
+
+    $reservations = Reservation::with(['annonce.user', 'messages.sender'])
+        ->where(function ($q) use ($user) {
+            $q->where('user_id', $user->id)
+              ->orWhereHas('annonce', fn($q) => $q->where('user_id', $user->id));
+        })
+        ->where('status', 'accepted')
+        ->latest()
+        ->get();
+
+    foreach ($reservations as $reservation) {
+        $reservation->has_unread = $reservation->messages
+            ->where('sender_id', '!=', $user->id)
+            ->where('created_at', '>', $reservation->last_read_at)
+            ->isNotEmpty();
+    }
+
+    return response()->json([
+        'reservations' => $reservations
+    ]);
+})->name('messages.refresh');
 
 require __DIR__.'/auth.php';

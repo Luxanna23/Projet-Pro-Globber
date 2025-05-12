@@ -2,6 +2,12 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
 import { Head, useForm } from '@inertiajs/vue3'
 import { ref, nextTick } from 'vue'
+import { computed, onMounted, onUnmounted } from 'vue'
+import dayjs from 'dayjs'
+import relativeTime from 'dayjs/plugin/relativeTime'
+import calendar from 'dayjs/plugin/calendar'
+import 'dayjs/locale/fr'
+import axios from 'axios'
 
 const props = defineProps({
   reservations: Array,
@@ -11,8 +17,13 @@ const props = defineProps({
 const activeReservation = ref(null)
 const form = useForm({ content: '' })
 
+
 const openChat = (reservation) => {
   activeReservation.value = reservation
+
+  // Marquer comme lu côté serveur
+  axios.post(route('messages.markAsRead', reservation.id))
+
   nextTick(() => {
     const el = document.getElementById('chat-messages')
     if (el) el.scrollTop = el.scrollHeight
@@ -51,6 +62,63 @@ const submit = () => {
     }
   });
 };
+const scrollToBottom = () => {
+  nextTick(() => {
+    const el = document.getElementById('chat-messages')
+    if (el) el.scrollTop = el.scrollHeight
+  })
+}
+
+dayjs.locale('fr')
+dayjs.extend(relativeTime)
+dayjs.extend(calendar)
+const groupedMessages = computed(() => {
+  if (!activeReservation.value?.messages) return {}
+
+  return activeReservation.value.messages.reduce((groups, msg) => {
+    const dateKey = dayjs(msg.created_at).format('YYYY-MM-DD')
+    if (!groups[dateKey]) groups[dateKey] = []
+    groups[dateKey].push(msg)
+    return groups
+  }, {})
+})
+
+const formatDateLabel = (dateStr) => {
+  const date = dayjs(dateStr)
+  if (date.isSame(dayjs(), 'day')) return "Aujourd’hui"
+  if (date.isSame(dayjs().subtract(1, 'day'), 'day')) return "Hier"
+  return date.format('dddd D MMMM') 
+}
+
+let interval = null;
+
+onMounted(() => {
+  interval = setInterval(refreshMessages, 5000) // toutes les 5 sec
+})
+
+onUnmounted(() => {
+  clearInterval(interval)
+})
+
+const refreshMessages = async () => {
+  try {
+    const response = await axios.get(route('messages.refresh')) 
+    const updatedReservations = response.data.reservations
+
+    updatedReservations.forEach((updated) => {
+      const res = props.reservations.find(r => r.id === updated.id)
+      if (!res) return
+
+      res.has_unread = updated.has_unread
+
+      if (activeReservation.value?.id === res.id) {
+        res.messages = updated.messages
+      }
+    })
+  } catch (error) {
+    console.error("Erreur polling :", error)
+  }
+}
 
 </script>
 
@@ -69,7 +137,17 @@ const submit = () => {
           class="p-3 mb-2 rounded-lg cursor-pointer hover:bg-gray-100"
           :class="{ 'bg-indigo-50': activeReservation?.id === reservation.id }"
         >
-          <h3 class="font-semibold text-sm">{{ reservation.annonce?.user?.name }}</h3>
+          <div class="flex justify-between items-center">
+            <h3 class="font-semibold text-sm">
+              {{ reservation.annonce?.user?.name }}
+            </h3>
+            <span
+              v-if="reservation.has_unread"
+              class="ml-2 bg-red-500 text-white text-[10px] px-2 py-0.5 rounded-full"
+            >
+              Nouveau
+            </span>
+          </div>
           <p class="text-xs text-gray-500">{{ reservation.annonce?.title }}</p>
         </div>
       </div>
@@ -77,27 +155,31 @@ const submit = () => {
       <!-- messages -->
       <div v-if="activeReservation" class="bg-white border rounded-xl p-4 flex flex-col md:col-span-2">
         <h2 class="text-lg font-semibold mb-2">
-          Conversation avec <span class="text-indigo-600">{{ activeReservation.annonce?.title }}</span>
+          Conversation avec <span class="text-indigo-600">{{ activeReservation.annonce?.user?.name }}</span>
         </h2>
 
         <div id="chat-messages" class="flex-1 overflow-y-auto space-y-3 py-4 border-t border-b my-2">
-          <div
-            v-for="msg in activeReservation.messages"
-            :key="msg.id"
-            :class="msg.sender_id === userId ? 'text-right' : 'text-left'"
-          >
+          <template v-for="(messages, date) in groupedMessages" :key="date">
+            <div class="text-center text-xs text-gray-500 my-2">
+              ───── {{ formatDateLabel(date) }} ─────
+            </div>
+
             <div
-              :class="[
-                'inline-block px-4 py-2 rounded-lg text-sm max-w-[70%]',
-                msg.sender_id === userId ? 'bg-indigo-600 text-white' : 'bg-gray-200 text-gray-800'
-              ]"
+              v-for="msg in messages"
+              :key="msg.id"
+              :class="msg.sender_id === userId ? 'text-right' : 'text-left'"
             >
-              {{ msg.content }}
+              <div
+                :class="[ 'inline-block px-4 py-2 rounded-lg text-sm max-w-[70%]',
+                          msg.sender_id === userId ? 'bg-indigo-600 text-white' : 'bg-gray-200 text-gray-800' ]"
+              >
+                {{ msg.content }}
+              </div>
+              <div class="text-xs text-gray-400 mt-1">
+                à {{ dayjs(msg.created_at).format('HH:mm') }}
+              </div>
             </div>
-            <div class="text-xs text-gray-500 mt-1">
-              {{ new Date(msg.created_at).toLocaleString() }}
-            </div>
-          </div>
+          </template>
         </div>
 
         <form @submit.prevent="submit" class="flex gap-4 mt-4">

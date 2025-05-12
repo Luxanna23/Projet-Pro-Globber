@@ -40,4 +40,17 @@ class MessageController extends Controller
         return back();
     }
 
+    public function markAsRead(Reservation $reservation)
+    {
+        $user = auth()->user();
+
+        if ($reservation->user_id !== $user->id && $reservation->annonce->user_id !== $user->id) {
+            abort(403);
+        }
+
+        $reservation->update(['last_read_at' => now()]);
+
+        return response()->noContent();
+    }
+
 }
