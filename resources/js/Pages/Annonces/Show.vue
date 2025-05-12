@@ -88,7 +88,19 @@ const reservedPeriods = computed(() =>
 // Fonction de blocage de date
 const isDateDisabled = (date) => {
   const d = new Date(date)
-  return reservedPeriods.value.some(p => d >= p.start && d <= p.end)
+
+  const dansReservation = reservedPeriods.value.some(p => d >= p.start && d <= p.end)
+
+  const dansDisponibilite = (props.calendrier ?? [])
+    .filter(p => p.type === 'disponible')
+    .some(p => {
+      const start = new Date(p.start)
+      const end = new Date(p.end)
+      return d >= start && d <= end
+    })
+
+  // On désactive la date si elle est réservée OU non disponible
+  return dansReservation || !dansDisponibilite
 }
 
 // Synchronisation ref -> form
@@ -233,6 +245,8 @@ watch(endDateRef, (val) => {
                       :min-date="new Date()"
                       :disabled-dates="isDateDisabled"
                       placeholder="Date d'arrivée"
+                      auto-apply
+                      hide-navigation=false
                       class="w-full"
                     />
                   </div>
@@ -245,6 +259,8 @@ watch(endDateRef, (val) => {
                       :min-date="startDateRef || new Date()"
                       :disabled-dates="isDateDisabled"
                       placeholder="Date de départ"
+                      auto-apply
+                      hide-navigation=false
                       class="w-full"
                     />
                   </div>
@@ -252,7 +268,7 @@ watch(endDateRef, (val) => {
 
                 <div>
                     <label class="block text-sm">Voyageurs</label>
-                    <select v-model="voyageurs" class="w-full bg-gray-100 text-grey rounded-md p-2 mt-1">
+                    <select v-model="voyageurs" class="w-full bg-white-100 text-grey rounded-md p-2 mt-1">
                     <option value="1">1 voyageur</option>
                     <option value="2">2 voyageurs</option>
                     <option value="3">3 voyageurs</option>

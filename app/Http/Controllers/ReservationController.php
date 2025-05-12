@@ -74,22 +74,16 @@ class ReservationController extends Controller
             abort(403, "Vous ne pouvez pas réserver votre propre annonce.");
         }
 
-        // Vérifier si la période est bloquée dans le calendrier
-        $conflit = Calendrier::where('annonce_id', $annonce->id)
-            ->whereIn('type', ['réservé'])
-            ->where(function ($query) use ($start, $end) {
-                $query->whereBetween('start_date', [$start, $end])
-                    ->orWhereBetween('end_date', [$start, $end])
-                    ->orWhere(function ($q) use ($start, $end) {
-                        $q->where('start_date', '<=', $start)
-                          ->where('end_date', '>=', $end);
-                    });
-            })
-            ->exists();
+        //  Vérifier que toute la période est couverte par une dispo existante
+        $dispo = Calendrier::where('annonce_id', $annonce->id)
+            ->where('type', 'disponible')
+            ->where('start_date', '<=', $start)
+            ->where('end_date', '>=', $end)
+            ->first();
 
-        if ($conflit) {
+        if (!$dispo) {
             throw ValidationException::withMessages([
-                'start_date' => 'Cette période n’est pas disponible pour cette annonce.',
+                'start_date' => 'Cette période n’est pas disponible à la réservation.',
             ]);
         }
 
