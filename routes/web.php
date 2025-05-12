@@ -3,6 +3,7 @@
 use App\Http\Controllers\OwnerReservationController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReservationController;
+use App\Http\Controllers\MessageController;
 use App\Models\Reservation;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -26,6 +27,8 @@ Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
+// Route pour le profil 
+
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -35,6 +38,8 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('annonces', \App\Http\Controllers\AnnonceController::class);
 });
+
+// Route pour les réservations
 
 Route::post('/annonces/{annonce}/reserver', [ReservationController::class, 'store'])
     ->middleware(['auth', 'verified'])
@@ -55,5 +60,31 @@ Route::middleware(['auth'])->group(function () {
     Route::patch('/proprietaire/reservations/{reservation}/status', [OwnerReservationController::class, 'updateStatus'])
         ->name('owner.reservations.updateStatus');
 });
+
+// Route pour la messagerie
+
+Route::get('/messages', function () {
+    $user = auth()->user();
+
+    $reservations = Reservation::with(['annonce.user', 'messages.sender'])
+        ->where(function ($q) use ($user) {
+            $q->where('user_id', $user->id)
+              ->orWhereHas('annonce', fn($q) => $q->where('user_id', $user->id));
+        })
+        ->where('status', 'accepted')
+        ->latest()
+        ->get();
+
+    return Inertia::render('Messages/Inbox', [
+        'reservations' => $reservations,
+        'userId' => $user->id,
+    ]);
+})->middleware(['auth', 'verified'])->name('messages.inbox');
+
+Route::post('/reservations/{reservation}/messages', [MessageController::class, 'store'])
+    ->middleware(['auth', 'verified'])
+    ->name('messages.store');
+
+// 
 
 require __DIR__.'/auth.php';

@@ -54,7 +54,12 @@ class Annonce extends Model
         return $this->hasMany(Calendrier::class);
     }
     public function disponibilites()
-{
-    return $this->hasMany(Calendrier::class)->where('type', 'disponible');
-}
+    {
+        return $this->hasMany(Calendrier::class)->where('type', 'disponible');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

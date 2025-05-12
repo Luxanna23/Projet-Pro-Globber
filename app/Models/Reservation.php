@@ -38,6 +38,10 @@ class Reservation extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function messages() {
+        return $this->hasMany(Message::class);
+    }
+
     protected static function booted()
 {
     static::deleting(function ($reservation) {
