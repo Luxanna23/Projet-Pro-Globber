@@ -126,9 +126,9 @@ const refreshMessages = async () => {
   <AuthenticatedLayout>
     <Head title="Messagerie" />
 
-    <div class="max-w-7xl mx-auto p-4 grid grid-cols-1 md:grid-cols-3 gap-6 h-[80vh]">
+    <div class="max-w-5xl mx-auto p-4 flex flex-col md:flex-row gap-4 h-[85vh]">
       <!-- bloc de messages -->
-      <div class="bg-white border rounded-xl p-4 overflow-y-auto md:col-span-1">
+      <div class="bg-white border rounded-xl p-4 overflow-y-auto md:w-1/3 w-full max-h-[85vh]">
         <h2 class="text-xl font-semibold mb-4">Conversations</h2>
         <div
           v-for="reservation in reservations"
@@ -153,7 +153,7 @@ const refreshMessages = async () => {
       </div>
 
       <!-- messages -->
-      <div v-if="activeReservation" class="bg-white border rounded-xl p-4 flex flex-col md:col-span-2">
+      <div v-if="activeReservation" class="bg-white border rounded-xl p-4 flex flex-col md:w-2/3 w-full max-h-[85vh]">
         <h2 class="text-lg font-semibold mb-2">
           Conversation avec <span class="text-indigo-600">{{ activeReservation.annonce?.user?.name }}</span>
         </h2>
@@ -170,28 +170,32 @@ const refreshMessages = async () => {
               :class="msg.sender_id === userId ? 'text-right' : 'text-left'"
             >
               <div
-                :class="[ 'inline-block px-4 py-2 rounded-lg text-sm max-w-[70%]',
-                          msg.sender_id === userId ? 'bg-indigo-600 text-white' : 'bg-gray-200 text-gray-800' ]"
+                :class="[
+                  'inline-block px-4 py-2 rounded-2xl text-sm max-w-[75%]',
+                  msg.sender_id === userId
+                    ? 'bg-indigo-600 text-white ml-auto shadow-md'
+                    : 'bg-gray-100 text-gray-800 mr-auto shadow'
+                ]"
               >
                 {{ msg.content }}
               </div>
-              <div class="text-xs text-gray-400 mt-1">
+              <div class="text-xs text-gray-500 mt-1" :class="msg.sender_id === userId ? 'text-right' : 'text-left'">
                 à {{ dayjs(msg.created_at).format('HH:mm') }}
               </div>
             </div>
           </template>
         </div>
 
-        <form @submit.prevent="submit" class="flex gap-4 mt-4">
+        <form @submit.prevent="submit" class="mt-4 flex gap-2 items-center">
           <input
             v-model="form.content"
             type="text"
             placeholder="Écrivez un message..."
-            class="flex-1 border rounded-lg px-4 py-2 text-sm"
+            class="flex-1 border rounded-full px-4 py-2 text-sm focus:outline-none focus:ring focus:border-indigo-300"
           />
           <button
             type="submit"
-            class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 text-sm"
+            class="bg-indigo-600 text-white px-5 py-2 rounded-full hover:bg-indigo-700 text-sm"
             :disabled="form.processing"
           >
             Envoyer
@@ -199,7 +203,8 @@ const refreshMessages = async () => {
         </form>
       </div>
 
-      <div v-else class="md:col-span-2 flex items-center justify-center text-gray-400 italic">
+        <!-- Message vide si rien sélectionné -->
+      <div v-else class="md:w-2/3 w-full flex items-center justify-center text-gray-400 italic">
         Sélectionnez une conversation pour commencer à discuter
       </div>
     </div>

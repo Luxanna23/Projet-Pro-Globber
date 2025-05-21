@@ -123,4 +123,25 @@ Route::get('/messages/refresh', function () {
     ]);
 })->name('messages.refresh');
 
+//pour les notif des messages sur le menu
+
+Route::get('/messages/unread-count', function () {
+    $user = auth()->user();
+
+    $reservations = Reservation::with('messages', 'annonce')
+        ->where(function ($q) use ($user) {
+            $q->where('user_id', $user->id)
+              ->orWhereHas('annonce', fn($q) => $q->where('user_id', $user->id));
+        })
+        ->get();
+
+    $hasUnread = $reservations->some(fn($r) =>
+        $r->messages->where('sender_id', '!=', $user->id)
+                    ->where('created_at', '>', $r->last_read_at)
+                    ->isNotEmpty()
+    );
+
+    return response()->json(['has_unread' => $hasUnread]);
+})->name('messages.unreadCount');
+
 require __DIR__.'/auth.php';

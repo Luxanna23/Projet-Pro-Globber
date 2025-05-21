@@ -1,13 +1,27 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
 import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
 import { Link } from '@inertiajs/vue3';
+import axios from 'axios';
 
 const showingNavigationDropdown = ref(false);
+
+const hasUnreadMessages = ref(false)
+
+onMounted(async () => {
+  setInterval(async () => {
+    try {
+        const response = await axios.get(route('messages.unreadCount'))
+        hasUnreadMessages.value = response.data.has_unread
+    } catch (error) {
+        console.error('Erreur polling badge message', error)
+    }
+    }, 10000)
+})
 </script>
 
 <template>
@@ -93,7 +107,17 @@ const showingNavigationDropdown = ref(false);
                                     <template #content>
                                         <DropdownLink :href="route('profile.edit')"> Profile </DropdownLink>
                                         <DropdownLink :href="route('profile.reservations')"> Mes réservations </DropdownLink>
-                                        <DropdownLink :href="route('messages.inbox')"> Mes messages </DropdownLink>
+                                            <!-- pcq les messages ont des notif -->
+                                        <DropdownLink
+                                            :href="route('messages.inbox')"
+                                            class="flex items-center gap-1 relative"
+                                            >
+                                            <span>Mes messages</span>
+                                            <span
+                                                v-if="hasUnreadMessages"
+                                                class="w-2.5 h-2.5 bg-red-500 rounded-full"
+                                            ></span>
+                                        </DropdownLink>
                                         <DropdownLink :href="route('logout')" method="post" as="button">
                                             Log Out
                                         </DropdownLink>
@@ -184,6 +208,37 @@ const showingNavigationDropdown = ref(false);
             <main>
                 <slot />
             </main>
+
+            <!-- Bottom Navigation (mobile only) -->
+            <div class="fixed bottom-0 left-0 w-full bg-white border-t border-gray-200 sm:hidden z-50">
+                <div class="flex justify-around py-2 text-xs text-gray-600">
+                    <Link href="/" class="flex flex-col items-center">
+                    <i class="ri-search-line text-lg"></i>
+                    <span>Explorer</span>
+                    </Link>
+                    <Link href="/favoris" class="flex flex-col items-center">
+                    <i class="ri-heart-line text-lg"></i>
+                    <span>Favoris</span>
+                    </Link>
+                    <Link href="/voyages" class="flex flex-col items-center">
+                    <i class="ri-airbnb-line text-lg"></i>
+                    <span>Voyages</span>
+                    </Link>
+                    <Link href="/messages" class="flex flex-col items-center relative">
+                    <i class="ri-chat-3-line text-lg"></i>
+                    <span>Messages</span>
+                    <span
+                        v-if="hasUnreadMessages"
+                        class="absolute top-0 right-1 w-2.5 h-2.5 bg-red-500 rounded-full"
+                    ></span>
+                    </Link>
+                    <Link href="/profile" class="flex flex-col items-center">
+                    <i class="ri-user-line text-lg"></i>
+                    <span>Profil</span>
+                    </Link>
+                </div>
+            </div>
+            
         </div>
     </div>
 </template>

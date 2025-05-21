@@ -9,6 +9,7 @@ import Toast from "vue-toastification";
 import "vue-toastification/dist/index.css";
 import VCalendar from 'v-calendar';
 import 'v-calendar/style.css';
+import 'remixicon/fonts/remixicon.css';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 

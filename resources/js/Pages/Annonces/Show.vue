@@ -246,6 +246,7 @@ watch(endDateRef, (val) => {
                       :disabled-dates="isDateDisabled"
                       placeholder="Date d'arrivée"
                       auto-apply
+                      :format="'dd/MM/yyyy'"
                       hide-navigation=false
                       class="w-full"
                     />
@@ -260,6 +261,7 @@ watch(endDateRef, (val) => {
                       :disabled-dates="isDateDisabled"
                       placeholder="Date de départ"
                       auto-apply
+                      :format="'dd/MM/yyyy'"
                       hide-navigation=false
                       class="w-full"
                     />

@@ -21,6 +21,7 @@
         "@vuepic/vue-datepicker": "^11.0.2",
         "date-fns": "^2.30.0",
         "dayjs": "^1.11.13",
+        "remixicon": "^4.6.0",
         "sweetalert2": "^11.21.0",
         "swiper": "^11.2.6",
         "v-calendar": "^3.1.2",

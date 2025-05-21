@@ -6,8 +6,8 @@ import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import { ref } from 'vue';
-import Datepicker from 'vue3-datepicker';
-
+import Datepicker from '@vuepic/vue-datepicker';
+import '@vuepic/vue-datepicker/dist/main.css';
 const startDate = ref(null)
 const endDate = ref(null)
 const disponibilites = ref([])
@@ -203,12 +203,24 @@ const submit = () => {
                 <div class="grid sm:grid-cols-3 gap-4 items-end">
                     <div>
                     <label class="block text-sm text-gray-700 mb-1">Date de début</label>
-                    <Datepicker v-model="startDate" :enable-time-picker="false" class="w-full rounded border-gray-300 shadow-sm" />
+                    <Datepicker 
+                        v-model="startDate" 
+                        :enable-time-picker="false" 
+                        auto-apply
+                        :format="'dd/MM/yyyy'"
+                        placeholder="Debut"
+                        class="w-full rounded border-gray-300 shadow-sm" />
                     </div>
 
                     <div>
                     <label class="block text-sm text-gray-700 mb-1">Date de fin</label>
-                    <Datepicker v-model="endDate" :enable-time-picker="false" class="w-full rounded border-gray-300 shadow-sm" />
+                    <Datepicker 
+                        v-model="endDate" 
+                        :enable-time-picker="false" 
+                        auto-apply
+                        :format="'dd/MM/yyyy'"
+                        placeholder="Fin"
+                        class="w-full rounded border-gray-300 shadow-sm" />
                     </div>
 
                     <div class="pt-2">
