@@ -5,9 +5,11 @@ import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import Datepicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
+import countries from '@/Utils/countries.js'
+
 const startDate = ref(null)
 const endDate = ref(null)
 const disponibilites = ref([])
@@ -19,6 +21,7 @@ const form = useForm({
     postal_code: '',
     city: '',
     country: '',
+    country_code: '',
     price_per_night: '',
     images: null,
     disponibilites: [],
@@ -64,6 +67,10 @@ const submit = () => {
     });
 };
 
+watch(() => form.country_code, (newCode) => {
+  const selected = countries.find(c => c.code === newCode)
+  if (selected) form.country = selected.name
+})
 </script>
 
 <template>
@@ -164,20 +171,21 @@ const submit = () => {
                 <InputError class="mt-2" :message="form.errors.city" />
             </div>
 
-            <div>  <!-- Pays -->
-                <InputLabel for="country" value="Pays" />
-
-                <TextInput
-                    id="country"
-                    type="text"
-                    class="mt-1 block w-full"
-                    v-model="form.country"
+             <!-- Pays -->
+            <div>
+                <InputLabel for="country_code" value="Pays" />
+                <select
+                    id="country_code"
+                    v-model="form.country_code"
+                    class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
                     required
-                    autofocus
-                    autocomplete="country"
-                />
-
-                <InputError class="mt-2" :message="form.errors.country" />
+                >
+                    <option value="" disabled>Sélectionner un pays</option>
+                    <option v-for="c in countries" :key="c.code" :value="c.code">
+                    {{ c.name }}
+                    </option>
+                </select>
+                <InputError class="mt-2" :message="form.errors.country_code" />
             </div>
 
             <div>  <!-- price_per_night -->

@@ -118,6 +118,8 @@ onMounted(async () => {
                                                 class="w-2.5 h-2.5 bg-red-500 rounded-full"
                                             ></span>
                                         </DropdownLink>
+                                        <DropdownLink :href="route('profile.rewards')">Récompenses</DropdownLink>
+                                        <DropdownLink :href="route('profile.scratchmap')">My Map</DropdownLink>
                                         <DropdownLink :href="route('logout')" method="post" as="button">
                                             Log Out
                                         </DropdownLink>
@@ -189,6 +191,8 @@ onMounted(async () => {
                             <ResponsiveNavLink :href="route('profile.edit')"> Profile </ResponsiveNavLink>
                             <ResponsiveNavLink :href="route('profile.reservations')"> Mes réservations </ResponsiveNavLink>
                             <ResponsiveNavLink :href="route('messages.inbox')"> Mes messages </ResponsiveNavLink>
+                            <ResponsiveNavLink :href="route('profile.rewards')">Récompenses</ResponsiveNavLink>
+                            <ResponsiveNavLink :href="route('profile.scratchmap')">My Map</ResponsiveNavLink>
                             <ResponsiveNavLink :href="route('logout')" method="post" as="button">
                                 Log Out
                             </ResponsiveNavLink>

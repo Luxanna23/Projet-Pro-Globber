@@ -16,11 +16,17 @@ class AnnonceController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //$annonces = Annonce::all();
-        $annonces = Annonce::with('images')->get(); 
-        return inertia::render('Annonces/Index', [
+        $perPage = 9;
+        $annonces = Annonce::with('images')->latest()->paginate($perPage); 
+        if ($request->wantsJson()) {
+            return response()->json([
+                'annonces' => $annonces,
+            ]);
+        }
+
+        return inertia('Annonces/Index', [
             'annonces' => $annonces,
         ]);
     }
@@ -46,6 +52,7 @@ class AnnonceController extends Controller
             'postal_code' => 'required|digits_between:4,11',
             'city' => 'required|string|max:255',
             'country' => 'required|string|max:255',
+            'country_code' => 'required|string|max:2', 
             'images' => 'required|array',
             'images.*' => 'image|mimes:jpeg,png,jpg|max:2048',
             'disponibilites' => 'nullable|array',
@@ -61,6 +68,7 @@ class AnnonceController extends Controller
             'postal_code' => $request->postal_code,
             'city' => $request->city,
             'country' => $request->country,
+            'country_code' => $request->country_code,
             'user_id' => auth()->id(),
         ]);
 

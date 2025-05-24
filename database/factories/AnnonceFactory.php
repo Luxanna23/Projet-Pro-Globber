@@ -16,15 +16,22 @@ class AnnonceFactory extends Factory
      */
     public function definition(): array
     {
+        $villes = [
+            'Paris', 'London', 'Berlin', 'Rome', 'Madrid', 'Lisbon',
+            'Ottawa', 'Washington', 'Tokyo', 'Beijing', 'Seoul', 'Moscow',
+            'Monaco', 'Brasilia', 'Marrakech', 'Cairo', 'New Delhi',
+            'Bangkok', 'Singapore', 'Dubai', 'Istanbul', 'Amsterdam',
+        ];
+
         return [
-            'title' => $this->faker->sentence(3),
+            'title' => "Appart 2 pièces à louer",
             'description' => $this->faker->paragraph(),
             'address' => $this->faker->address(),
             'postal_code' => $this->faker->postcode(),
-            'city' => $this->faker->city(),
+            'city' => $this->faker->randomElement($villes),
             'country' => $this->faker->country(),
             'price_per_night' => $this->faker->numberBetween(50, 500),
-            'user_id' => \App\Models\User::factory(),
+            'user_id' => 2,
         ];
     }
 }

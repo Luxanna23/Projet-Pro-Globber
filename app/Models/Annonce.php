@@ -18,6 +18,7 @@ class Annonce extends Model
         'postal_code',
         'city',
         'country',
+        'country_code', // ISO code pour la scratchmap
         'price_per_night',
         'user_id',
     ];

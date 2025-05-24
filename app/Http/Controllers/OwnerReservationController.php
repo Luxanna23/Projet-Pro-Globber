@@ -30,11 +30,29 @@ class OwnerReservationController extends Controller
             'status' => 'required|in:accepted,refused',
         ]);
 
-        // Vérifie que l'utilisateur est bien le propriétaire
+        // verifie que l'utilisateur est bien le propriétaire
         if ($reservation->annonce->user_id !== Auth::id()) {
             abort(403);
         }
+        //si on passe à accepted et que ce n'était pas déjà le cas, on gagnes des points de fidélité pour la partie recompense
+        if ($request->status === 'accepted' && $reservation->status !== 'accepted') {
+            $reservation->user->increment('points', 25);
 
+            // Marquer le pays comme visité
+            $countryCode = $reservation->annonce->country_code; // le champ doit être en format ISO (FR, US...)
+
+            if ($countryCode) {
+                $alreadyVisited = $reservation->user->visitedCountries()
+                    ->where('country_code', $countryCode)
+                    ->exists();
+
+                if (! $alreadyVisited) {
+                    $reservation->user->visitedCountries()->create([
+                        'country_code' => $countryCode,
+                    ]);
+                }
+            }
+        }
         $reservation->status = $request->status;
         $reservation->save();
 

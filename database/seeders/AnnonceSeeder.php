@@ -13,16 +13,24 @@ class AnnonceSeeder extends Seeder
      */
     public function run(): void
     {
+        $villes = [
+            'Paris', 'London', 'Berlin', 'Rome', 'Madrid', 'Lisbon',
+            'Ottawa', 'Washington', 'Tokyo', 'Beijing', 'Seoul', 'Moscow',
+            'Monaco', 'Brasilia', 'Marrakech', 'Cairo', 'New Delhi',
+            'Bangkok', 'Singapore', 'Dubai', 'Istanbul', 'Amsterdam',
+        ];
+        
         $faker = \Faker\Factory::create();  
-        for ($i = 0; $i < 10; $i++) {
+        for ($i = 0; $i < 50; $i++) {
             $annonce = \App\Models\Annonce::create([
-                'title' => "Appart 2 pièces à Paris",
-                'description' => "Magnifiique appartement a Paris vu sur la tour Eiffel, proche de tous les commerces et transports en commun.",
+                'title' => "Appart 2 pièces à louer",
+                'description' => $faker->paragraph(1),
                 'price_per_night' => $faker->randomFloat(2, 100, 600),
-                'address' => "1 rue de la paix, Paris",
+                'address' => $faker->streetAddress,
                 'postal_code' => "75001",
-                'city' => "Paris",
-                'country' => "France",
+                'city' => $faker->randomElement($villes),
+                'country' => $faker->country,
+                'country_code' => $faker->countryCode,
                 'user_id' => 2,
             ]);
 

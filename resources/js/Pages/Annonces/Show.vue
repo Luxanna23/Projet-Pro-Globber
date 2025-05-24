@@ -5,7 +5,7 @@ import 'swiper/css/pagination';
 import 'swiper/css/navigation';
 import { Pagination, Navigation } from 'swiper/modules';
 import VueEasyLightbox from 'vue-easy-lightbox';
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import AutoLayout from '@/Layouts/AutoLayout.vue'
 import Datepicker from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
 import { Head, Link, useForm,usePage } from '@inertiajs/vue3';
@@ -119,7 +119,7 @@ watch(endDateRef, (val) => {
 </script>
 
 <template>
-    <AuthenticatedLayout>
+    <AutoLayout>
       <Head :title="annonce.title" />
   
       <!-- Image en carousel avec swiper -->
@@ -311,5 +311,5 @@ watch(endDateRef, (val) => {
         </div>
 
       </div>
-    </AuthenticatedLayout>
+    </AutoLayout>
   </template>

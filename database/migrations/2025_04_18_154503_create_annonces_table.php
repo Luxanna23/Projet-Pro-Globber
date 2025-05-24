@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('postal_code');
             $table->string('city');
             $table->string('country');
+            $table->string('country_code'); // ISO code pour la scratchmap
             $table->float('price_per_night');
             $table->foreignId('user_id')->constrained();
             $table->timestamps();

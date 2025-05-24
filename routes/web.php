@@ -4,6 +4,9 @@ use App\Http\Controllers\OwnerReservationController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\MessageController;
+use App\Http\Controllers\AnnonceController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\ScratchmapController;
 use App\Models\Reservation;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -19,9 +22,8 @@ use Inertia\Inertia;
 |
 */
 
-Route::get('/', function () {
-    return Inertia::render('Welcome');
-})->name('welcome');
+
+Route::get('/', [HomeController::class, 'index'])->name('welcome');
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
@@ -36,7 +38,8 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/profile/reservations', [ReservationController::class, 'index'])->name('profile.reservations');
 
-    Route::resource('annonces', \App\Http\Controllers\AnnonceController::class);
+    Route::resource('annonces', AnnonceController::class);
+    Route::get('/annonces', [AnnonceController::class, 'index'])->name('annonces.index');
 });
 
 // Route pour les réservations
@@ -144,4 +147,19 @@ Route::get('/messages/unread-count', function () {
     return response()->json(['has_unread' => $hasUnread]);
 })->name('messages.unreadCount');
 
+//Recompenses
+Route::get('/profile/rewards', function () {
+    $user = auth()->user();
+    $reservations = Reservation::where('user_id', $user->id)->get();
+
+    return Inertia::render('Profile/Rewards', [
+        'reservations' => $reservations,
+    ]);
+})->middleware(['auth'])->name('profile.rewards');
+
 require __DIR__.'/auth.php';
+
+//scratch map
+Route::get('/profile/scratchmap', [ScratchmapController::class, 'index'])
+    ->middleware(['auth'])
+    ->name('profile.scratchmap');

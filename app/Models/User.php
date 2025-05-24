@@ -29,6 +29,7 @@ class User extends Authenticatable
         'city',
         'country',
         'email',
+        'points',
         'password',
     ];
 
@@ -71,5 +72,10 @@ class User extends Authenticatable
 
     public function messages() {
         return $this->hasMany(Message::class, 'sender_id');
+    }
+
+    public function visitedCountries()
+    {
+        return $this->hasMany(VisitedCountries::class);
     }
 }
