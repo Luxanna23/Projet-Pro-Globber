@@ -150,11 +150,10 @@ Route::get('/messages/unread-count', function () {
 
 //Recompenses
 Route::get('/profile/rewards', function () {
-    $user = auth()->user();
-    $reservations = Reservation::where('user_id', $user->id)->get();
+    $user = auth()->user(); 
 
     return Inertia::render('Profile/Rewards', [
-        'reservations' => $reservations,
+        'user' => $user, 
     ]);
 })->middleware(['auth'])->name('profile.rewards');
 

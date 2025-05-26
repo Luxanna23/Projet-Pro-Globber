@@ -5,7 +5,7 @@ import { Head, usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
 
 const reservations = usePage().props.reservations || []
-const points = computed(() => reservations.length * 25)
+const points = usePage().props.user.points || 0
 
 const rewards = [
   { points: 100, label: '10% de réduction', icon: '🎁' },
