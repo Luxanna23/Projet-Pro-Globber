@@ -200,26 +200,32 @@ watch(endDateRef, (val) => {
             </div>
           </div>
 
-  
-          <!-- Commentaires fictifs -->
+          <!-- Avis -->
           <div>
-            <h2 class="text-xl font-semibold mt-10 mb-4">Commentaires</h2>
+            <h2 class="text-xl font-semibold mt-10 mb-4">Avis</h2>
   
-            <div class="space-y-4">
-              <div class="bg-white p-4 rounded-xl shadow">
-                <p class="font-semibold">Florent · octobre 2024</p>
-                <p class="text-gray-600 text-sm mb-2">Séjour d'une nuit</p>
-                <p>Génial ! On a passé un super weekend, les installations de la maison sont incroyables !</p>
+            <div v-if="annonce.comments.length">
+              <div
+                v-for="(comment, i) in annonce.comments"
+                :key="i"
+                class="bg-white rounded-xl border p-4 mb-4 shadow"
+              >
+                <div class="flex items-center justify-between mb-2">
+                  <span class="font-bold text-gray-800">{{ comment.user }}</span>
+                  <span class="text-yellow-500">
+                    ⭐ {{ comment.rating }} / 5
+                  </span>
+                </div>
+                <p class="text-gray-700">{{ comment.content }}</p>
+                <p class="text-xs text-gray-400 mt-2">{{ comment.created_at }}</p>
               </div>
-  
-              <div class="bg-white p-4 rounded-xl shadow">
-                <p class="font-semibold">Jeremy · août 2024</p>
-                <p class="text-gray-600 text-sm mb-2">Séjour d'une nuit</p>
-                <p>Un séjour agréable, des hôtes accueillants, les équipements avec confiance et sympathie !</p>
-              </div>
+            </div>
+            <div v-else class="text-gray-500 italic">
+              Aucun avis pour le moment.
             </div>
           </div>
         </div>
+        
   
         <!-- colonne a droite -->
         <div class="space-y-4">

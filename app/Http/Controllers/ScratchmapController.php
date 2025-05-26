@@ -28,4 +28,25 @@ class ScratchmapController extends Controller
             'visitedCountries' => $visitedCountries,
         ]);
     }
+
+    public function share()
+    {
+        $user = Auth::user();
+
+        $visited = $user->reservations()
+            ->where('status', 'accepted')
+            ->with('annonce')
+            ->get()
+            ->pluck('annonce.country')
+            ->unique()
+            ->filter()
+            ->values()
+            ->toArray();
+
+        return Inertia::render('Profile/ScratchMapShare', [
+            'visitedCountries' => $visited,
+            'userName' => $user->name,
+            'total' => count($visited),
+        ]);
+    }
 }

@@ -21,6 +21,7 @@ return new class extends Migration
             $table->foreignId('calendrier_id')->constrained();
             $table->foreignId('user_id')->constrained();
             $table->timestamp('last_read_at')->nullable();
+            $table->boolean('has_commented')->default(false);
             $table->timestamps();
             $table->softDeletes();
         });

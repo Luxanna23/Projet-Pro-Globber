@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Annonce;
 use App\Models\Calendrier;
+use App\Models\Comment;
 use App\Models\Reservation;
 use App\Models\User;
 use Carbon\Carbon;
@@ -35,7 +36,20 @@ class ReservationController extends Controller
             ->with('annonce')
             ->whereDate('end_date', '<', Carbon::today())
             ->orderBy('start_date', 'desc')
-            ->get();
+            ->get()
+            ->map(function ($reservation) use ($user) {
+                $hasCommented = Comment::where('user_id', $user->id)
+                    ->where('annonce_id', $reservation->annonce_id)
+                    ->exists();
+
+                // transforme annonce en tableau pour injecter une propriété custom
+                $annonce = $reservation->annonce->toArray();
+                $annonce['has_commented'] = $hasCommented;
+
+                $reservation->annonce = $annonce;
+
+                return $reservation;
+            });
 
         return Inertia::render('Profile/Reservations', [
             'reservationsActives' => $reservationsActives,

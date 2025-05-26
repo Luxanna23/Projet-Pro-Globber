@@ -5,6 +5,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\AnnonceController;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ScratchmapController;
 use App\Models\Reservation;
@@ -163,3 +164,9 @@ require __DIR__.'/auth.php';
 Route::get('/profile/scratchmap', [ScratchmapController::class, 'index'])
     ->middleware(['auth'])
     ->name('profile.scratchmap');
+
+Route::get('/profile/scratchmap/share', [ScratchMapController::class, 'share'])
+    ->name('scratchmap.share');
+
+//pour les commentaires
+Route::post('/annonces/{annonce}/comment', [CommentController::class, 'store'])->name('comment.store');

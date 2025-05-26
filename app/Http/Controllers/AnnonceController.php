@@ -104,7 +104,7 @@ class AnnonceController extends Controller
      */
     public function show(Annonce $annonce)
     {
-        $annonce->load('calendrier');
+        $annonce->load('calendrier', 'comments.user');
 
         $calendrier = $annonce->calendrier->map(fn ($entry) => [
             'start' => $entry->start_date,
@@ -115,6 +115,12 @@ class AnnonceController extends Controller
             'annonce' => [
                 ...$annonce->toArray(),
                 'image_urls' => $annonce->images->map(fn ($image) => asset('storage/AnnonceImage/'.$image->path)),
+                'comments' => $annonce->comments->map(fn ($comment) => [
+                'user' => $comment->user->name,
+                'rating' => $comment->rating,
+                'content' => $comment->content,
+                'created_at' => $comment->created_at->diffForHumans(),
+            ]),
             ],
             'user' => auth()->user(),
             'calendrier' => $calendrier,

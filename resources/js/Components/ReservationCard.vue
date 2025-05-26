@@ -22,7 +22,7 @@ function formatDate(date) {
         alt="Photo de l'annonce"
         class="w-full h-full object-cover"
       />
-     <div
+      <div
         v-if="status === 'active'"
         class="absolute top-2 right-2 flex items-center gap-1 text-xs font-medium px-2 py-1 rounded shadow"
         :class="{
@@ -42,8 +42,8 @@ function formatDate(date) {
             reservation.status === 'accepted' ? 'Confirmée' :
             reservation.status === 'refused' ? 'Refusée' : 'Annulée'
         }}
-    </div>
-    <div
+      </div>
+      <div
         v-if="status === 'past'"
         class="absolute top-2 right-2 bg-gray-600 text-white text-xs px-2 py-1 rounded shadow"
       >
@@ -63,6 +63,21 @@ function formatDate(date) {
       <p class="mt-2 text-sm font-bold text-blue-600">
         {{ reservation.price }} €
       </p>
+
+
+      <!-- Bouton laisser un commentaire, seulement si c'est une réservation passée et non commentée -->
+      <div
+        v-if="status === 'past' && !reservation.has_commented"
+        class="mt-4"
+      >
+        <button
+          @click="$emit('on-comment', reservation)"
+          class="text-indigo-600 text-sm hover:underline"
+        >
+          💬 Laisser un avis
+        </button>
+      </div>
+
     </div>
   </div>
 </template>
