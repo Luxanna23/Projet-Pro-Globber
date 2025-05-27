@@ -65,17 +65,30 @@ function formatDate(date) {
       </p>
 
 
-      <!-- Bouton laisser un commentaire, seulement si c'est une réservation passée et non commentée -->
-      <div
-        v-if="status === 'past' && !reservation.has_commented"
-        class="mt-4"
-      >
+      <!-- Zone d'action ou statut pour les réservations passées -->
+      <div class="mt-4">
+        <!-- Cas où l'utilisateur peut laisser un avis -->
         <button
+          v-if="status === 'past' && reservation.status === 'accepted' && !reservation.has_commented"
           @click="$emit('on-comment', reservation)"
           class="text-indigo-600 text-sm hover:underline"
         >
           💬 Laisser un avis
         </button>
+
+        <!-- Cas où le séjour est terminé mais pas accepté ou déjà commenté -->
+        <span
+          v-else-if="status === 'past'"
+          class="text-xs font-medium px-2 py-1 rounded shadow bg-gray-100 text-gray-600"
+        >
+          {{
+            reservation.status === 'refused' ? 'Refusée' :
+            reservation.status === 'pending' ? 'Sans réponse' :
+            reservation.status === 'cancelled' ? 'Annulée' :
+            reservation.has_commented ? 'Avis déposé' :
+            'Statut inconnu'
+          }}
+        </span>
       </div>
 
     </div>

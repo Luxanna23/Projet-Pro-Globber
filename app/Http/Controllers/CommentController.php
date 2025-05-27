@@ -29,7 +29,7 @@ class CommentController extends Controller
             ->first();
 
         if (! $reservation) {
-            abort(403, 'Vous pouvez uniquement laisser un avis après votre séjour terminé.');
+            abort(403, 'Vous pouvez uniquement laisser un avis si votre voyage est accepté et terminé.');
         }
 
         Comment::create([
