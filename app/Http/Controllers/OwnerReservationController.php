@@ -6,6 +6,7 @@ use App\Models\Reservation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
+use Carbon\Carbon;
 
 class OwnerReservationController extends Controller
 {
@@ -13,17 +14,28 @@ class OwnerReservationController extends Controller
     {
         $user = Auth::user();
 
-        // Récupère les réservations liées aux annonces du propriétaire
-        $reservations = Reservation::with(['annonce', 'user'])
+        // Récupère toutes les réservations liées aux annonces du propriétaire
+        $allReservations = Reservation::with(['annonce', 'user'])
             ->whereHas('annonce', fn($q) => $q->where('user_id', $user->id))
-            ->get()
-            ->groupBy('status');
+            ->get();
+
+        // On regroupe les réservations terminées à part (peu importe le statut)
+        $finished = $allReservations->filter(fn($r) =>
+            Carbon::parse($r->end_date)->isPast()
+        );
+
+        // On regroupe le reste par statut
+        $grouped = $allReservations->filter(fn($r) =>
+            Carbon::parse($r->end_date)->isFuture()
+        )->groupBy('status');
+
+        // Ajoute manuellement les terminées
+        $grouped['finished'] = $finished;
 
         return Inertia::render('Owner/Reservations', [
-            'reservations' => $reservations,
+            'reservations' => $grouped,
         ]);
     }
-
     public function updateStatus(Request $request, Reservation $reservation)
     {
         $request->validate([

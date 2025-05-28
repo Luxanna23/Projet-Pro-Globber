@@ -55,6 +55,18 @@ const reservations = usePage().props.reservations
       <p v-else class="text-gray-400 text-sm">Aucune réservation refusée.</p>
     </SectionBlock>
 
+    <!-- Terminées -->
+    <SectionBlock title="Terminées" color="gray">
+      <div v-if="reservations.finished?.length" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <ReservationCardOwner
+          v-for="r in reservations.finished"
+          :key="r.id"
+          :reservation="r"
+        />
+      </div>
+      <p v-else class="text-gray-400 text-sm">Aucune réservation terminée.</p>
+    </SectionBlock>
+
   </div>
 
     </AuthenticatedLayout>

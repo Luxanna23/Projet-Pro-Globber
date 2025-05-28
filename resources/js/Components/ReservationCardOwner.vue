@@ -57,7 +57,7 @@ function updateStatus(status) {
     <p class="text-sm text-gray-700">Locataire : {{ reservation.user.name }}</p>
     <p class="text-sm font-bold text-grey-600">{{ reservation.price }} €</p>
 
-    <div v-if="showActions" class="flex gap-2 pt-2">
+    <div v-if="showActions && new Date(reservation.end_date)" class="flex gap-2 pt-2">
       <button
         class="px-3 py-1 text-xs bg-green-100 text-green-700 rounded hover:bg-green-200"
         @click="updateStatus('accepted')"
@@ -76,7 +76,7 @@ function updateStatus(status) {
       'text-green-600': reservation.status === 'accepted',
       'text-red-600': reservation.status === 'refused'
     }">
-      {{ reservation.status === 'accepted' ? 'Confirmée' : 'Refusée' }}
+      {{ reservation.status === 'accepted' ? 'Confirmée' : reservation.status === 'refused' ? 'refusée' : 'sans reponse' }}
     </p>
   </div>
 </template>
