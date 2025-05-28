@@ -14,8 +14,8 @@ class UserSeeder extends Seeder
     public function run(): void
     {
         \App\Models\User::create([
-            'firstname' => 'toto',
-            'lastname' => 'toto',
+            'firstname' => 'Toto',
+            'lastname' => 'Grand',
             'email' => 'toto@gmail.com',
             'phone' => '0612345678',
             'password' => Hash::make('totototo'),
@@ -27,7 +27,7 @@ class UserSeeder extends Seeder
 
         \App\Models\User::create([
             'firstname' => 'John',
-            'lastname' => 'dada',
+            'lastname' => 'Doe',
             'email' => 'dada@gmail.com',
             'phone' => '0612365678',
             'password' => Hash::make('totototo'),

@@ -11,6 +11,7 @@ import '@vuepic/vue-datepicker/dist/main.css'
 import { Head, Link, useForm,usePage } from '@inertiajs/vue3';
 import { ref, computed, onMounted, nextTick, watch  } from 'vue';
 import { isWithinInterval, parseISO } from 'date-fns';
+import axios from 'axios';
 
 const props = defineProps({
     annonce: Object,
@@ -115,6 +116,27 @@ watch(startDateRef, (val) => {
 watch(endDateRef, (val) => {
   form.end_date = val ? val.toISOString().split('T')[0] : ''
 })
+
+//paiement
+const launchCheckout = async () => {
+  if (!form.start_date || !form.end_date) {
+    alert("Veuillez sélectionner des dates valides");
+    return;
+  }
+
+  try {
+    const response = await axios.post('/checkout', {
+      annonce_id: annonce.id,
+      start_date: form.start_date,
+      end_date: form.end_date,
+      price: total.value,
+    })
+
+    window.location.href = response.data.url
+  } catch (err) {
+    console.error("Erreur de checkout", err)
+  }
+}
 
 </script>
 
@@ -285,11 +307,10 @@ watch(endDateRef, (val) => {
 
                 <!-- Bouton -->
                 <button
-                    @click="submit"
-                    class="w-full bg-[#6439FF] hover:bg-[#A594F9] text-white py-2 rounded-md text-lg font-semibold" 
-                    :disabled="form.processing"
+                  @click="launchCheckout"
+                  class="w-full bg-[#6439FF] hover:bg-[#A594F9] text-white py-2 rounded-md text-lg font-semibold" 
                 >
-                    Réserver
+                  Réserver
                 </button>
 
                 <p class="text-xs text-gray-400 text-center">Aucun montant ne vous sera débité pour le moment</p>
