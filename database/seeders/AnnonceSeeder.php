@@ -17,7 +17,7 @@ class AnnonceSeeder extends Seeder
         $villes = [
             'Paris', 'London', 'Berlin', 'Rome', 'Madrid', 'Lisbon',
             'Ottawa', 'Washington', 'Tokyo', 'Beijing', 'Seoul', 'Moscow',
-            'Monaco', 'Brasilia', 'Marrakech', 'Cairo', 'New Delhi',
+            'Monaco', 'Brasilia', 'Marrakech', 'Cairo',
             'Bangkok', 'Singapore', 'Dubai', 'Istanbul', 'Amsterdam',
         ];
         

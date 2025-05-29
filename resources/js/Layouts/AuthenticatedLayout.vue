@@ -34,7 +34,7 @@ onMounted(async () => {
                         <div class="flex">
                             <!-- Logo -->
                             <div class="shrink-0 flex items-center">
-                                <Link :href="route('annonces.index')">
+                                <Link href="/">
                                     <ApplicationLogo
                                         class="block h-9 w-auto fill-current text-gray-800"
                                     />
@@ -216,17 +216,17 @@ onMounted(async () => {
             <!-- Bottom Navigation (mobile only) -->
             <div class="fixed bottom-0 left-0 w-full bg-white border-t border-gray-200 sm:hidden z-50">
                 <div class="flex justify-around py-2 text-xs text-gray-600">
-                    <Link href="/" class="flex flex-col items-center">
+                    <Link href="/annonces" class="flex flex-col items-center">
                     <i class="ri-search-line text-lg"></i>
                     <span>Explorer</span>
                     </Link>
-                    <Link href="/favoris" class="flex flex-col items-center">
-                    <i class="ri-heart-line text-lg"></i>
-                    <span>Favoris</span>
+                    <Link href="/profile/scratchmap" class="flex flex-col items-center">
+                    <i class="ri-map-line text-lg"></i>
+                    <span>My map</span>
                     </Link>
-                    <Link href="/voyages" class="flex flex-col items-center">
-                    <i class="ri-airbnb-line text-lg"></i>
-                    <span>Voyages</span>
+                    <Link href="/annonces/create" class="flex flex-col items-center">
+                    <i class="ri-heart-line text-lg"></i>
+                    <span>Poster</span>
                     </Link>
                     <Link href="/messages" class="flex flex-col items-center relative">
                     <i class="ri-chat-3-line text-lg"></i>

@@ -31,6 +31,9 @@ Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
+//pour afficher les annonces filtrées 
+Route::get('/annonces/search', [AnnonceController::class, 'search'])->name('annonces.search');
+
 // Route pour le profil 
 
 Route::middleware('auth')->group(function () {

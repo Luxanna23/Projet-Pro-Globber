@@ -7,6 +7,7 @@ use App\Http\Requests\StoreAnnonceRequest;
 use App\Http\Requests\UpdateAnnonceRequest;
 use App\Models\AnnonceImage;
 use App\Models\Calendrier;
+use Carbon\Carbon;
 use Inertia\Inertia;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
@@ -124,6 +125,38 @@ class AnnonceController extends Controller
             ],
             'user' => auth()->user(),
             'calendrier' => $calendrier,
+        ]);
+    }
+
+    /**
+     * pour afficher des resultats filtrés
+     */
+    public function search(Request $request)
+    {
+        $query = Annonce::with('images');
+
+        if ($request->destination) {
+        $query->where('country', 'like', '%' . $request->destination . '%')
+              ->orWhere('city', 'like', '%' . $request->destination . '%');
+        }
+
+        // if ($request->start_date && $request->end_date) {
+        //     // Rechercher les annonces disponibles sur la période demandée
+        //     $start = Carbon::parse($request->start_date);
+        //     $end = Carbon::parse($request->end_date);
+
+        //     // Filtrer les annonces ayant au moins une disponibilité pendant la période
+        //     $query->whereHas('calendriers', function ($q) use ($start, $end) {
+        //         $q->where('type', 'disponible')
+        //         ->where('start_date', '<=', $start)
+        //         ->where('end_date', '>=', $end);
+        //     });
+        // }
+
+        $annonces = $query->latest()->paginate(9);
+
+        return Inertia::render('Annonces/Index', [
+            'annonces' => $annonces,
         ]);
     }
 

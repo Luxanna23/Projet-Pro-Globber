@@ -104,7 +104,10 @@ class ReservationController extends Controller
         // c pour mieux calculer les dates meme si c le même jour (par exemple du 5 mai au 6 mai ➔ il dira 1 jour, alors qu'on veut 1 nuit) et il faut forcer au moins 1 nuit pour louer.
         $days = max(1, $start->diffInDays($end));
         // calcul du prix
-        $price = $days * $annonce->price_per_night;
+        $cleaningFee = 150 ;
+        $taxes = 17; 
+        $nighttotal = $days * $annonce->price_per_night;
+        $price = round($nighttotal + $cleaningFee + $taxes, 2);
 
         // Bloquer la période dans le calendrier
         $calendrier = Calendrier::create([

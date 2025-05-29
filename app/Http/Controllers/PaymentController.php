@@ -12,6 +12,8 @@ use Stripe\PaymentIntent;
 use Stripe\Checkout\Session;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
+use App\Mail\ReservationConfirmed;
+use Illuminate\Support\Facades\Mail;
 
 class PaymentController extends Controller
 {
@@ -36,7 +38,7 @@ class PaymentController extends Controller
             ]],
             'mode' => 'payment',
             'success_url' => route('checkout.success') . '?session_id={CHECKOUT_SESSION_ID}',
-            'cancel_url' => route('checkout.cancel'),
+            'cancel_url' => route('annonces.show', $annonce->id),
             'metadata' => [
                 'user_id' => $user->id,
                 'annonce_id' => $request->annonce_id,
@@ -78,7 +80,10 @@ class PaymentController extends Controller
         }
 
         $days = max(1, $start->diffInDays($end));
-        $price = $days * $annonce->price_per_night;
+        $cleaningFee = 150 ;
+        $taxes = 17; 
+        $nighttotal = $days * $annonce->price_per_night;
+        $price = round($nighttotal + $cleaningFee + $taxes, 2);
 
         $calendrier = Calendrier::create([
             'annonce_id' => $annonce->id,
@@ -95,6 +100,8 @@ class PaymentController extends Controller
             'price' => $price,
             'calendrier_id' => $calendrier->id,
         ]);
+
+        //Mail::to($reservation->user->email)->send(new ReservationConfirmed($reservation));
 
         if ($dispo) {
             $dispo->delete();
