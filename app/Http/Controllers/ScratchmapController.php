@@ -15,15 +15,21 @@ class ScratchmapController extends Controller
         $user = Auth::user();
 
         // On récupère tous les country_codes uniques des réservations confirmées
-        $visitedCountries = $user->reservations()
-            ->where('status', 'accepted')
-            ->with('annonce') // pour avoir accès à annonce->country_code
-            ->get()
-            ->pluck('annonce.country_code')
+        // $visitedCountries = $user->reservations()
+        //     ->where('status', 'accepted')
+        //     ->with('annonce') // pour avoir accès à annonce->country_code
+        //     ->get()
+        //     ->pluck('annonce.country_code')
+        //     ->unique()
+        //     ->filter()
+        //     ->values();
+
+        $visitedCountries = $user->visitedCountries()
+            ->pluck('country_code')
             ->unique()
             ->filter()
             ->values();
-
+        
         return Inertia::render('Profile/ScratchMap', [
             'visitedCountries' => $visitedCountries,
         ]);

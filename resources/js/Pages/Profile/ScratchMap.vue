@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref, nextTick } from 'vue'
+import { onMounted, ref, nextTick, toRef } from 'vue'
 import * as d3 from 'd3'
 import { Head } from '@inertiajs/vue3'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
@@ -9,12 +9,19 @@ import ScratchMapShare from './ScratchMapShare.vue'
 const props = defineProps({
   visitedCountries: Array
 })
+console.log("Visited Countries:", props.visitedCountries);
+
+
 const showHiddenShare = ref(false)
 const shareRef = ref(null)
 
 const svgRef = ref(null)
 
 const totalCountries = 193;
+
+const visitedCountries = toRef(props, 'visitedCountries');
+const visitedSet = new Set(visitedCountries.value.map(country => country.toUpperCase()));
+
 const visitedCount = props.visitedCountries.length;
 const visitedPercent = Math.round((visitedCount / totalCountries) * 100);
 
@@ -34,8 +41,8 @@ onMounted(async () => {
     .classed('responsive-svg', true)
 
   const geojson = await d3.json('/geo/countries.geojson')
-
-  const visitedSet = new Set(props.visitedCountries.map(c => c.toUpperCase()))
+  // find france in the geojson
+  console.log("GeoJSON France:", geojson.features.find(feature => feature.properties['ISO3166-1-Alpha-2'] === 'FR'));
 
   svg.selectAll('path')
     .data(geojson.features)
@@ -44,10 +51,15 @@ onMounted(async () => {
     .attr('d', path)
     .attr('fill', d => {
       const iso = d.properties['ISO3166-1-Alpha-2']
-      return visitedSet.has(iso) ? '#4ade80' : '#e5e7eb'
+      console.log(`ISO: ${iso}, Visited: ${visitedSet.has(iso)}`);
+      
+     return visitedSet.has(iso) ? '#4ade80' : '#e5e7eb'
     })
     .attr('stroke', '#999')
     .attr('stroke-width', 0.5)
+
+    console.log("FR", visitedSet.has("FR"));
+    
 })
 
 //poour l'exportation
@@ -82,7 +94,7 @@ const captureShareMap = async () => {
           ref="svgRef"
           class="w-full h-auto max-w-5xl mx-auto block"
           style="min-height: 300px;"
-        />
+        ></svg>
       </div>
 
       <!-- Bouton partager -->
