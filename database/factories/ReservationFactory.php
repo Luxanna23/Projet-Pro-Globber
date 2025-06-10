@@ -30,8 +30,8 @@ class ReservationFactory extends Factory
             'end_date' => $end,
             'user_id' => User::inRandomOrder()->first()?->id ?? User::factory(),
             'annonce_id' => Annonce::inRandomOrder()->first()?->id ?? Annonce::factory(),
-            'calendrier_id' => null,
-            'status' => $this->faker->randomElement(['pending', 'accepted', 'refused', 'cancelled']),
+            'calendrier_id' => Calendrier::factory(),
+            'status' => 'pending',
             'last_read_at' => now(),
             'has_commented' => false,
         ];

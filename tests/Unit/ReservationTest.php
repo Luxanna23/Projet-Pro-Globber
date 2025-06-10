@@ -12,7 +12,7 @@ class ReservationTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_creer_reservation_fonctionne()
+    public function test_create_reservation()
     {
         $user = User::factory()->create();
 
@@ -43,5 +43,26 @@ class ReservationTest extends TestCase
             'calendrier_id' => $calendrier->id,
             'status' => 'pending',
         ]);
+    }
+
+    public function test_reservation_belongs_to_user()
+    {
+        $user = User::factory()->create();
+        $annonce = Annonce::factory()->create(['user_id' => $user->id]);
+        $calendrier = Calendrier::factory()->create(['annonce_id' => $annonce->id]);
+
+        $reservation = Reservation::factory()->create([
+            'user_id' => $user->id,
+            'annonce_id' => $annonce->id,
+            'calendrier_id' => $calendrier->id,
+        ]);
+
+        $this->assertInstanceOf(User::class, $reservation->user);
+    }
+
+    public function test_reservation_has_status_enum()
+    {
+        $reservation = new Reservation(['status' => 'accepted']);
+        $this->assertEquals('accepted', $reservation->status);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -30,6 +31,7 @@ class AnnonceFactory extends Factory
             'postal_code' => $this->faker->postcode(),
             'city' => $this->faker->randomElement($villes),
             'country' => $this->faker->country(),
+            'country_code' => $this->faker->countryCode(),
             'price_per_night' => $this->faker->numberBetween(50, 500),
             'user_id' => 2,
         ];

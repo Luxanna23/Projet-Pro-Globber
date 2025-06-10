@@ -54,8 +54,11 @@ Route::post('/annonces/{annonce}/reserver', [ReservationController::class, 'stor
     ->name('annonces.reserve');
 
 Route::get('/reservations/{reservation}/confirmation', function (Reservation $reservation) {
+    // Vérifie si l'utilisateur authentifié est le propriétaire de la réservation
+    if (auth()->id() !== $reservation->user_id) {
+        abort(403);
+    }
     $reservation->load('annonce', 'user');
-
     return Inertia::render('Reservations/Confirmation', [
         'reservation' => $reservation,
     ]);
@@ -104,6 +107,10 @@ Route::post('/reservations/{reservation}/messages', [MessageController::class, '
 Route::post('/messages/{reservation}/read', [MessageController::class, 'markAsRead'])
     ->middleware(['auth', 'verified'])
     ->name('messages.markAsRead');
+
+Route::get('/reservations/{reservation}/messages', [MessageController::class, 'show'])
+    ->middleware(['auth', 'verified'])
+    ->name('messages.show');
 
 // c'est pour le rafraichissement de la messagerie
 

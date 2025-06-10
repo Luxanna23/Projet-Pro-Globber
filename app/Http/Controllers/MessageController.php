@@ -53,4 +53,20 @@ class MessageController extends Controller
         return response()->noContent();
     }
 
+    
+    public function show(Reservation $reservation)
+    {
+        if (
+            $reservation->user_id !== auth()->id() &&
+            $reservation->annonce->user_id !== auth()->id()
+        ) {
+            abort(403);
+        }
+         $messages = $reservation->messages()->with('sender')->get();
+
+        return inertia('Messages/Chat', [
+            'reservation' => $reservation,
+            'messages' => $messages,
+        ]);
+    }
 }
