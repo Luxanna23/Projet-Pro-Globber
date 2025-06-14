@@ -11,7 +11,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
-
+use Illuminate\Support\Facades\Http;
 
 class ReservationController extends Controller
 {
@@ -155,6 +155,13 @@ class ReservationController extends Controller
                 ]);
             }
         }
+
+        // Récupère les infos utiles
+        $user = $request->user();
+        // Appelle l'API Express
+        Http::post('http://localhost:5000/api/sync', [
+            'email' => $user->email
+        ]);
 
         return redirect()->route('reservations.confirmation', ['reservation' => $reservation->id]);
     }

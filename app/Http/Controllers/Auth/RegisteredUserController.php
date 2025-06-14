@@ -10,6 +10,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Validation\Rules;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -53,6 +54,12 @@ class RegisteredUserController extends Controller
             'postal_code' => $request->postal_code,
             'city' => $request->city,
             'country' => $request->country,
+        ]);
+
+        Http::post('http://localhost:5000/api/user-sync', [
+            'firstname' => $user->firstname,
+            'lastname' => $user->lastname,
+            'email' => $user->email,
         ]);
 
         event(new Registered($user));

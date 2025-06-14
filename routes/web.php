@@ -9,6 +9,7 @@ use App\Http\Controllers\CommentController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ScratchmapController;
+use App\Http\Controllers\Api\ReservationExportController;
 use App\Models\Reservation;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -185,3 +186,6 @@ Route::post('/annonces/{annonce}/comment', [CommentController::class, 'store'])-
 Route::post('/checkout', [PaymentController::class, 'checkout'])->name('checkout');
 Route::get('/checkout/success', [PaymentController::class, 'checkoutSuccess'])->name('checkout.success');
 Route::get('/checkout/cancel', fn () => Inertia::render('Checkout/Cancel'))->name('checkout.cancel');
+
+//route pour envoyer les réservations a ma base NoSQL
+Route::get('/reservations/{email}', [ReservationExportController::class, 'byEmail']);

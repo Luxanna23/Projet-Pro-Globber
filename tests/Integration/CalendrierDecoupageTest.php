@@ -21,7 +21,7 @@ class CalendrierDecoupageTest extends TestCase
 
         $annonce = Annonce::factory()->create(['user_id' => $owner->id]);
 
-        // Disponibilité initiale : 10 → 20
+        // j'initiialise des dispo sur mon annonce
         $dispo = Calendrier::create([
             'annonce_id' => $annonce->id,
             'type' => 'disponible',
@@ -29,7 +29,7 @@ class CalendrierDecoupageTest extends TestCase
             'end_date' => now()->addDays(20),
         ]);
 
-        // Réservation sur une partie : 12 → 15
+        // je reserve qlq jours sur mon annonce
         $response = $this->post("/annonces/{$annonce->id}/reserver", [
             'start_date' => now()->addDays(12)->toDateString(),
             'end_date' => now()->addDays(15)->toDateString(),
@@ -37,12 +37,11 @@ class CalendrierDecoupageTest extends TestCase
 
         $response->assertRedirect();
 
-        // L’ancienne dispo est supprimée
         $this->assertDatabaseMissing('calendriers', [
             'id' => $dispo->id,
         ]);
 
-        // Nouvelle dispo 1 : 10 → 12
+        // on regarde si les nouvelles dispo sont bien créées avant et apres
         $this->assertDatabaseHas('calendriers', [
             'annonce_id' => $annonce->id,
             'start_date' => now()->addDays(10)->toDateString(),
@@ -50,7 +49,6 @@ class CalendrierDecoupageTest extends TestCase
             'type' => 'disponible',
         ]);
 
-        // Nouvelle dispo 2 : 15 → 20
         $this->assertDatabaseHas('calendriers', [
             'annonce_id' => $annonce->id,
             'start_date' => now()->addDays(15)->toDateString(),
