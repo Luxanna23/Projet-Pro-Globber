@@ -42,6 +42,17 @@ jobs:
     - name: Copy CI .env and generate key
       run: cp .env.ci .env && php artisan key:generate
 
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: 18
+
+    - name: Install NPM dependencies
+      run: npm install
+
+    - name: Build frontend with Vite
+      run: npm run build
+
     - name: Run migrations
       run: php artisan migrate --force
 
