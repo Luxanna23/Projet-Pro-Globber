@@ -31,7 +31,7 @@ class AuthFeatureTest extends TestCase
         'password_confirmation' => 'password',
     ]);
 
-    $response->assertRedirect('/annonces');
+    $response->assertRedirect(route('annonces.index'));
     $this->assertAuthenticated();
 }
 
