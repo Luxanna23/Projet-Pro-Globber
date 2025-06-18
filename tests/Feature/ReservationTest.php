@@ -16,6 +16,10 @@ class ReservationTest extends TestCase
 
     public function test_user_can_create_reservation_on_available_dates(): void
     {
+        Http::fake([
+            'http://localhost:5000/api/sync' => Http::response(['success' => true], 200),
+        ]);
+        
         $user = User::factory()->create();
         $owner = User::factory()->create();
 
@@ -36,6 +40,10 @@ class ReservationTest extends TestCase
         ]);
 
         $response->assertRedirect(); // vers confirmation
+
+        Http::assertSent(function ($request) {
+            return $request->url() === 'http://localhost:5000/api/sync';
+        });
 
         $this->assertDatabaseHas('reservations', [
             'user_id' => $user->id,

@@ -14,6 +14,11 @@ class ReservationTest extends TestCase
 
     public function test_create_reservation()
     {
+
+        Http::fake([
+            'http://localhost:5000/api/sync' => Http::response(['success' => true], 200),
+        ]);
+        
         $user = User::factory()->create();
 
         $annonce = Annonce::factory()->create([
