@@ -1,0 +1,1 @@
+export const Ziggy = window.ziggy;
