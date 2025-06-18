@@ -6,6 +6,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use App\Models\User;
 use Tests\TestCase;
+use Illuminate\Support\Facades\Http;
 
 class AuthFeatureTest extends TestCase
 {
@@ -13,6 +14,10 @@ class AuthFeatureTest extends TestCase
 
     public function test_user_can_register(): void
 {
+    Http::fake([
+        'http://localhost:5000/api/sync' => Http::response(['success' => true], 200),
+    ]);
+
     $response = $this->post('/register', [
         'firstname' => 'toto',
         'lastname' => 'toto',

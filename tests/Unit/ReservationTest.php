@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\Annonce;
 use App\Models\Reservation;
 use App\Models\Calendrier;
+use Illuminate\Support\Facades\Http;
 
 class ReservationTest extends TestCase
 {
@@ -18,7 +19,7 @@ class ReservationTest extends TestCase
         Http::fake([
             'http://localhost:5000/api/sync' => Http::response(['success' => true], 200),
         ]);
-        
+
         $user = User::factory()->create();
 
         $annonce = Annonce::factory()->create([

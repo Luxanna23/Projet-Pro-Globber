@@ -9,6 +9,7 @@ use App\Models\Annonce;
 use App\Models\Calendrier;
 use App\Models\Reservation;
 use App\Models\User;
+use Illuminate\Support\Facades\Http;
 
 class ReservationTest extends TestCase
 {
