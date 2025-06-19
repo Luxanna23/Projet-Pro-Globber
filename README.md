@@ -14,6 +14,48 @@ Une application permettant de reserver des appartements et voyager a travers le 
 
 ## Installation et démarrage du projet
 
+### Méthode 0: Avec les scripts d'automatisation
+
+#### Pour Linux/Mac (avec Make)
+
+Le projet inclut un Makefile pour simplifier toutes les commandes Docker. Pour installer et lancer le projet:
+
+```bash
+# Installation complète (crée .env, construit les conteneurs, lance les migrations, les seeders, etc.)
+make setup
+
+# Démarrer les conteneurs
+make start
+
+# Lancer le serveur de développement frontend
+make npm-dev
+```
+
+Pour voir toutes les commandes disponibles:
+```bash
+make help
+```
+
+#### Pour Windows (avec PowerShell)
+
+Un script PowerShell est disponible pour reproduire les fonctionnalités du Makefile:
+
+```powershell
+# Installation complète du projet
+.\commands.ps1 setup
+
+# Démarrer les conteneurs
+.\commands.ps1 start
+
+# Lancer le serveur de développement frontend
+.\commands.ps1 npm-dev
+```
+
+Pour voir toutes les commandes disponibles:
+```powershell
+.\commands.ps1
+```
+
 ### Méthode 1: Avec Docker (recommandé)
 
 1. **Cloner le projet**
@@ -114,6 +156,12 @@ Une application permettant de reserver des appartements et voyager a travers le 
   
   # Sans Docker
   php artisan test
+  
+  # Avec Make (Linux/Mac)
+  make test
+  
+  # Avec PowerShell (Windows)
+  .\commands.ps1 test
   ```
 
 - **Vider le cache**
@@ -123,9 +171,22 @@ Une application permettant de reserver des appartements et voyager a travers le 
   
   # Sans Docker
   php artisan cache:clear
+  
+  # Avec Make (Linux/Mac)
+  make cache-clear
+  
+  # Avec PowerShell (Windows)
+  .\commands.ps1 cache-clear
   ```
 
 - **Arrêter les conteneurs Docker**
   ```bash
+  # Avec Docker
   docker-compose down
+  
+  # Avec Make (Linux/Mac)
+  make stop
+  
+  # Avec PowerShell (Windows)
+  .\commands.ps1 stop
   ```
