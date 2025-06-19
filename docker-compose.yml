@@ -1,31 +1,69 @@
 version: '3.8'
 
 services:
-  app:
+  php:
+    container_name: Globber_php
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: Globber
-    ports:
-      - "8000:9000"
+      target: dev
     volumes:
-      - .:/var/www
-    env_file:
-      - .env.docker
+      - .:/var/www/html
+      - ./vendor:/var/www/html/vendor
+      - ./docker/php/php.ini:/usr/local/etc/php/conf.d/app.ini
+    environment:
+      - APP_ENV=dev
+      - APP_DEBUG=1
+      - DATABASE_URL=mysql://root:root@db:3306/appairbnbpro?serverVersion=8.0&charset=utf8mb4
+      - REDIS_URL=redis://redis:6379
+      - CORS_ALLOW_ORIGIN=*
+    networks:
+      - Globber_network
     depends_on:
       - db
+      - redis
+
+  nginx:
+    container_name: Globber_nginx
+    image: nginx:stable-alpine
+    ports:
+      - "80:80"
+    volumes:
+      - .:/var/www/html
+      - ./vendor:/var/www/html/vendor
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - php
+    networks:
+      - Globber_network
 
   db:
     image: mysql:8.0
-    container_name: appairbnbpro-db
+    container_name: Globber-database
     restart: always
     environment:
       MYSQL_DATABASE: appairbnbpro
       MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: dbuser
+      MYSQL_PASSWORD: dbpassword
     ports:
       - "3306:3306"
     volumes:
       - dbdata:/var/lib/mysql
+    command: --default-authentication-plugin=mysql_native_password
+    networks:
+      - Globber_network
+
+  redis:
+    image: redis:alpine
+    container_name: Globber-redis
+    ports:
+      - "6379:6379"
+    networks:
+      - Globber_network
+
+networks:
+  Globber_network:
 
 volumes:
   dbdata:
