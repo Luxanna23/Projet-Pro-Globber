@@ -14,49 +14,9 @@ Une application permettant de reserver des appartements et voyager a travers le 
 
 ## Installation et démarrage du projet
 
-### Méthode 0: Avec les scripts d'automatisation
 
-#### Pour Linux/Mac (avec Make)
 
-Le projet inclut un Makefile pour simplifier toutes les commandes Docker. Pour installer et lancer le projet:
-
-```bash
-# Installation complète (crée .env, construit les conteneurs, lance les migrations, les seeders, etc.)
-make setup
-
-# Démarrer les conteneurs
-make start
-
-# Lancer le serveur de développement frontend
-make npm-dev
-```
-
-Pour voir toutes les commandes disponibles:
-```bash
-make help
-```
-
-#### Pour Windows (avec PowerShell)
-
-Un script PowerShell est disponible pour reproduire les fonctionnalités du Makefile:
-
-```powershell
-# Installation complète du projet
-.\commands.ps1 setup
-
-# Démarrer les conteneurs
-.\commands.ps1 start
-
-# Lancer le serveur de développement frontend
-.\commands.ps1 npm-dev
-```
-
-Pour voir toutes les commandes disponibles:
-```powershell
-.\commands.ps1
-```
-
-### Méthode 1: Avec Docker (recommandé)
+### Avec Docker 
 
 1. **Cloner le projet**
    ```bash
@@ -83,9 +43,12 @@ Pour voir toutes les commandes disponibles:
    # Lancement des migrations pour créer les tables dans la base de données
    docker-compose exec php php artisan migrate
    
-   # Remplissage de la base de données avec des données de test (optionnel)
+   # Remplissage de la base de données avec des données de test 
    docker-compose exec php php artisan db:seed
    
+   # SI BESOIN DE REFRESH A CAUSE DES SEEDERS (non applicable en production)
+   docker-compose exec php php artisan migrate:fresh --seed
+
    # Création des liens symboliques pour le stockage
    docker-compose exec php php artisan storage:link
    ```
@@ -93,59 +56,6 @@ Pour voir toutes les commandes disponibles:
 5. **Accès à l'application**
    - Backend et Frontend: http://localhost
 
-### Méthode 2: Développement local (sans Docker)
-
-1. **Cloner le projet**
-   ```bash
-   git clone <repository-url>
-   cd Projet-Pro-Globber
-   ```
-
-2. **Configuration du fichier d'environnement**
-   ```bash
-   cp .env.example .env
-   ```
-
-3. **Installation des dépendances**
-   ```bash
-   # Installation des dépendances PHP
-   composer install
-   
-   # Installation des dépendances JavaScript
-   npm install
-   ```
-
-4. **Configuration de la base de données**
-   - Créez une base de données MySQL
-   - Mettez à jour les informations de connexion dans le fichier `.env`
-
-5. **Préparation de l'application**
-   ```bash
-   # Génération de la clé d'application
-   php artisan key:generate
-   
-   # Lancement des migrations
-   php artisan migrate
-   
-   # Remplissage avec des données de test (optionnel)
-   php artisan db:seed
-   
-   # Création des liens symboliques pour le stockage
-   php artisan storage:link
-   ```
-
-6. **Lancement des serveurs de développement**
-   ```bash
-   # Dans un terminal : lancement du serveur PHP
-   php artisan serve
-   
-   # Dans un autre terminal : lancement de Vite pour le frontend
-   npm run dev
-   ```
-
-7. **Accès à l'application**
-   - Backend: http://localhost:8000
-   - Frontend: http://localhost:5173 (ou autre port indiqué par Vite)
 
 ## Commandes utiles
 
@@ -153,40 +63,21 @@ Pour voir toutes les commandes disponibles:
   ```bash
   # Avec Docker
   docker-compose exec php php artisan test
-  
-  # Sans Docker
-  php artisan test
-  
-  # Avec Make (Linux/Mac)
-  make test
-  
-  # Avec PowerShell (Windows)
-  .\commands.ps1 test
-  ```
+ 
 
 - **Vider le cache**
   ```bash
   # Avec Docker
   docker-compose exec php php artisan cache:clear
   
-  # Sans Docker
-  php artisan cache:clear
-  
-  # Avec Make (Linux/Mac)
-  make cache-clear
-  
-  # Avec PowerShell (Windows)
-  .\commands.ps1 cache-clear
-  ```
 
 - **Arrêter les conteneurs Docker**
   ```bash
   # Avec Docker
   docker-compose down
-  
-  # Avec Make (Linux/Mac)
-  make stop
-  
-  # Avec PowerShell (Windows)
-  .\commands.ps1 stop
-  ```
+
+- **compile les fichiers Vue**
+npm run build           
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
