@@ -5,6 +5,7 @@ import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
+import { ref } from 'vue'
 
 const form = useForm({
     name: '',
@@ -13,11 +14,20 @@ const form = useForm({
     password_confirmation: '',
 });
 
+const rgpdAccepted = ref(false)
+const showRgpdModal = ref(false)
+
 const submit = () => {
+    if (!rgpdAccepted.value) {
+        alert("Veuillez accepter les conditions RGPD pour vous inscrire.");
+        return;
+    }
+
     form.post(route('register'), {
         onFinish: () => form.reset('password', 'password_confirmation'),
     });
 };
+
 </script>
 
 <template>
@@ -184,6 +194,16 @@ const submit = () => {
                 <InputError class="mt-2" :message="form.errors.password_confirmation" />
             </div>
 
+            <div class="text-sm text-gray-700 flex items-start gap-2">
+                <input type="checkbox" id="rgpd" v-model="rgpdAccepted" required class="mt-1">
+                <label for="rgpd">
+                    J’accepte les
+                    <button type="button" class="text-blue-600 underline" @click="showRgpdModal = true">
+                        conditions d'utilisation et la politique de confidentialité
+                    </button>
+                </label>
+            </div>
+
             <div class="flex items-center justify-end mt-4">
                 <Link
                     :href="route('login')"
@@ -198,4 +218,26 @@ const submit = () => {
             </div>
         </form>
     </GuestLayout>
+
+
+    <div v-if="showRgpdModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+        <div class="bg-white p-6 rounded-lg max-w-xl w-full shadow-lg overflow-y-auto max-h-[80vh]">
+            <h2 class="text-xl font-semibold mb-4">Conditions RGPD</h2>
+            <p class="text-sm text-gray-700">
+            En vous inscrivant, vous acceptez que vos données soient utilisées exclusivement dans le cadre de l’application. 
+            Conformément au Règlement Général sur la Protection des Données (RGPD), vous disposez d’un droit d’accès, de 
+            rectification et de suppression de vos informations personnelles.
+            </p>
+            <p class="text-sm text-gray-700 mt-4">
+            Vos données sont stockées de manière sécurisée et ne seront jamais transmises à des tiers sans votre consentement.
+            Vous pouvez supprimer votre compte à tout moment depuis votre espace personnel.
+            </p>
+            <div class="mt-6 text-right">
+            <button @click="showRgpdModal = false" class="px-4 py-2 bg-gray-800 text-white rounded hover:bg-gray-700">
+                Fermer
+            </button>
+            </div>
+        </div>
+    </div>
+
 </template>
