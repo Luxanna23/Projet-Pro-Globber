@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('annonces', function (Blueprint $table) {
             $table->id('id');
             $table->string('title');
-            $table->string('description');
+            $table->text('description');
             $table->string('address');
             $table->string('postal_code');
             $table->string('city');
