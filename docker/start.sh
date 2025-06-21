@@ -1,12 +1,11 @@
-#!/bin/bash
+bash#!/bin/bash
 
-# Configuration du port dynamique pour nginx
-if [ -n "$PORT" ]; then
-    sed -i "s/\${PORT:-80}/$PORT/g" /etc/nginx/sites-available/default
-    echo "Nginx configured to listen on port $PORT"
-else
-    echo "Warning: PORT environment variable not set, using default port 80"
-fi
+echo "=== Démarrage du conteneur ==="
+
+# Vérification des permissions
+chown -R www-data:www-data /var/www/html
+chmod -R 755 /var/www/html/storage
+chmod -R 755 /var/www/html/bootstrap/cache
 
 # Optimisation Laravel
 cd /var/www/html
@@ -14,10 +13,11 @@ php artisan config:cache
 php artisan route:cache
 php artisan view:cache
 
-echo "Starting PHP-FPM..."
-# Démarrage de PHP-FPM en arrière-plan
-php-fpm --daemonize
+echo "Démarrage de PHP-FPM..."
+php-fpm -D
 
-echo "Starting Nginx..."
-# Démarrage de Nginx en avant-plan (pour que le container reste actif)
+echo "Attente de PHP-FPM..."
+sleep 3
+
+echo "Démarrage de Nginx..."
 exec nginx -g "daemon off;"

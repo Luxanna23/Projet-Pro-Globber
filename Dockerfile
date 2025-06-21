@@ -25,6 +25,8 @@ RUN apt-get update && apt-get install -y \
     && docker-php-ext-install pdo_mysql zip gd \
     && rm -rf /var/lib/apt/lists/*
 
+RUN echo "listen = 127.0.0.1:9000" > /usr/local/etc/php-fpm.d/zzz-custom.conf
+
 WORKDIR /var/www/html
 
 # Installation de Composer
