@@ -16,7 +16,7 @@ php artisan view:cache
 
 echo "Starting PHP-FPM..."
 # Démarrage de PHP-FPM en arrière-plan
-php-fpm8.3 --daemonize
+php-fpm --daemonize
 
 echo "Starting Nginx..."
 # Démarrage de Nginx en avant-plan (pour que le container reste actif)
