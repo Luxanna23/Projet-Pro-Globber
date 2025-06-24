@@ -30,6 +30,8 @@ WORKDIR /var/www/html
 # Installation de Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
+COPY . .
+
 # Copie du composer.json/lock
 COPY composer.json composer.lock ./
 RUN composer install --no-interaction --prefer-dist --optimize-autoloader
@@ -84,7 +86,7 @@ RUN rm /etc/nginx/sites-enabled/default && \
     ln -s /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default
 
 # Configuration PHP-FPM pour écouter sur TCP
-RUN sed -i 's/listen = \/run\/php\/php-fpm.sock/listen = 127.0.0.1:9000/' /usr/local/etc/php-fpm.d/www.conf && \
+RUN sed -i 's/listen = .*|listen = 0.0.0.0:9000|' /usr/local/etc/php-fpm.d/www.conf && \
     echo "listen = 127.0.0.1:9000" >> /usr/local/etc/php-fpm.d/www.conf
 
 # Création des dossiers nécessaires

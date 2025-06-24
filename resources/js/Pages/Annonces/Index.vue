@@ -13,10 +13,9 @@ const loading = ref(false);
 // Récupérer la bonne image
 const getImage = (annonce) => {
   return annonce.images?.[0]?.path
-    ? `/storage/${annonce.images[0].path.replace('public/', '')}`
+    ? `/storage/AnnonceImage/${annonce.images[0].path}`
     : 'https://via.placeholder.com/400x300?text=Annonce';
 };
-
 // Charger plus d’annonces via axios
 const loadMore = async () => {
   if (!nextPageUrl.value || loading.value) return;
