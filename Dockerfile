@@ -1,25 +1,19 @@
-# Étape 1 : Builder Node
+
 FROM node:20 AS node_builder
 WORKDIR /app
 
-# Copie des fichiers nécessaires au build
 COPY package.json package-lock.json ./
 RUN npm install
 
-# Copie du code source
 COPY . .
 
-# Création d'un fichier Ziggy temporaire avec les exports nécessaires
 RUN mkdir -p vendor/tightenco/ziggy && \
     echo "export const ZiggyVue = { install: () => {} }; export default ZiggyVue;" > vendor/tightenco/ziggy/index.js
 
-# Build du front
 RUN npm run build
 
-# Étape 2 : Stage de développement
 FROM php:8.3-fpm AS dev
 
-# Dépendances système pour le développement
 RUN apt-get update && apt-get install -y \
     git unzip curl libzip-dev libpng-dev libonig-dev \
     && docker-php-ext-install pdo_mysql zip gd \
@@ -27,33 +21,25 @@ RUN apt-get update && apt-get install -y \
 
 WORKDIR /var/www/html
 
-# Installation de Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 COPY . .
 
-# Copie du composer.json/lock
 COPY composer.json composer.lock ./
 RUN composer install --no-interaction --prefer-dist --optimize-autoloader
 
-# Copie de tout le projet
 COPY . .
 
-# Copie du build front compilé depuis l'étape Node
 COPY --from=node_builder /app/public/build /var/www/html/public/build
 
-# Génération du fichier Ziggy
 RUN php artisan ziggy:generate
 
-# Permissions pour le développement
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 755 /var/www/html/storage \
     && chmod -R 755 /var/www/html/bootstrap/cache
 
-# Étape 3 : PHP + Nginx (serveur Laravel) - Production
 FROM php:8.3-fpm AS production
 
-# Dépendances système + nginx
 RUN apt-get update && apt-get install -y \
     git unzip curl libzip-dev libpng-dev libonig-dev nginx netcat-openbsd \
     && docker-php-ext-install pdo_mysql zip gd \
@@ -61,47 +47,36 @@ RUN apt-get update && apt-get install -y \
 
 WORKDIR /var/www/html
 
-# Installation de Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Copie du composer.json/lock d'abord pour optimiser le cache
 COPY composer.json composer.lock ./
 RUN composer install --no-interaction --prefer-dist --optimize-autoloader --no-dev --no-scripts
 
-# Copie de tout le projet
 COPY . .
 
-# Réinstallation avec les scripts maintenant que tout est copié
 RUN composer install --no-interaction --prefer-dist --optimize-autoloader --no-dev
 
-# Copie du build front compilé depuis l'étape Node
 COPY --from=node_builder /app/public/build /var/www/html/public/build
 
-# Génération du fichier Ziggy maintenant que Laravel est installé
 RUN php artisan ziggy:generate
 
-# Configuration nginx
 COPY docker/nginx/default.conf /etc/nginx/sites-available/default
 RUN rm /etc/nginx/sites-enabled/default && \
     ln -s /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default
 
-# Configuration PHP-FPM pour écouter sur TCP
 RUN sed -i 's/listen = .*|listen = 0.0.0.0:9000|' /usr/local/etc/php-fpm.d/www.conf && \
     echo "listen = 127.0.0.1:9000" >> /usr/local/etc/php-fpm.d/www.conf
 
-# Création des dossiers nécessaires
 RUN mkdir -p /var/www/html/storage/logs \
     /var/www/html/storage/framework/cache \
     /var/www/html/storage/framework/sessions \
     /var/www/html/storage/framework/views \
     /var/www/html/bootstrap/cache
 
-# Permissions
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 755 /var/www/html/storage \
     && chmod -R 755 /var/www/html/bootstrap/cache
 
-# Script de démarrage intégré
 RUN echo '#!/bin/bash\n\
 echo "=== Démarrage du conteneur ==="\n\
 \n\
@@ -170,5 +145,4 @@ exec nginx -g "daemon off;"\n\
 
 EXPOSE 80
 
-# Lancement du script intégré
 CMD ["/start.sh"]
