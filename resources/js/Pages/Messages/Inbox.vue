@@ -93,7 +93,7 @@ const formatDateLabel = (dateStr) => {
 let interval = null;
 
 onMounted(() => {
-  interval = setInterval(refreshMessages, 5000) // toutes les 5 sec
+  interval = setInterval(refreshMessages, 3000) // toutes les 3 sec
 })
 
 onUnmounted(() => {

@@ -56,7 +56,7 @@ class RegisteredUserController extends Controller
             'country' => $request->country,
         ]);
 
-        Http::post('http://localhost:5000/api/user-sync', [
+        Http::post('http://localhost:3000/api/user-sync', [
             'firstname' => $user->firstname,
             'lastname' => $user->lastname,
             'email' => $user->email,
