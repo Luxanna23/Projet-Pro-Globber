@@ -15,7 +15,7 @@ class AuthFeatureTest extends TestCase
     public function test_user_can_register(): void
 {
     Http::fake([
-        'http://localhost:5000/api/user-sync' => Http::response(['success' => true], 200),
+        'http://localhost:3000/api/user-sync' => Http::response(['success' => true], 200),
     ]);
 
     $response = $this->post('/register', [
