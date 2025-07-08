@@ -159,7 +159,7 @@ class ReservationController extends Controller
         // Récupère les infos utiles
         $user = $request->user();
         // Appelle l'API Express
-        Http::post('http://localhost:5000/api/sync', [
+        Http::post('http://localhost:3000/api/sync', [
             'email' => $user->email
         ]);
 

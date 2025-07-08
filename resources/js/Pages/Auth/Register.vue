@@ -8,8 +8,14 @@ import { Head, Link, useForm } from '@inertiajs/vue3';
 import { ref } from 'vue'
 
 const form = useForm({
-    name: '',
+    firstname: '',
+    lastname: '',
     email: '',
+    phone: '',
+    address: '',
+    postal_code: '',
+    city: '',
+    country: '',
     password: '',
     password_confirmation: '',
 });
@@ -22,6 +28,9 @@ const submit = () => {
         alert("Veuillez accepter les conditions RGPD pour vous inscrire.");
         return;
     }
+
+    // pour forcer le postal_code à être une chaîne
+    form.postal_code = form.postal_code.toString();
 
     form.post(route('register'), {
         onFinish: () => form.reset('password', 'password_confirmation'),
