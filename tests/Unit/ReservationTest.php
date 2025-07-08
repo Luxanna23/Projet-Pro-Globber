@@ -17,7 +17,7 @@ class ReservationTest extends TestCase
     {
 
         Http::fake([
-            'http://localhost:5000/api/sync' => Http::response(['success' => true], 200),
+            'http://localhost:3000/api/sync' => Http::response(['success' => true], 200),
         ]);
 
         $user = User::factory()->create();
